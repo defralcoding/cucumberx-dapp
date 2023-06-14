@@ -1,9 +1,19 @@
 /* Bootstrap overrides
 -------------------------------------------------- */
+@font-face {
+	font-family: BubbleGum;
+	src: url("../Bubblegum.ttf");
+}
+
+$cucumber-color-1: #00d084;
+$cucumber-color-2: #ffe97d;
+$cucumber-color-3: #d1d1e1;
+$cucumber-color-4: #c0ebf1;
 
 $body: #000;
 $headings-font-weight: 300 !important;
-$primary: #1b46c2;
+$primary: #9dff20;
+$secondary: $cucumber-color-3;
 $light: #fafafa;
 $card-border-radius: 0.75rem;
 $card-inner-border-radius: subtract($card-border-radius, 1px);
@@ -60,6 +70,21 @@ Override Bootstrap variables only above.
 @import "~bootstrap/scss/bootstrap.scss";
 
 @import "~bootstrap/scss/reboot";
+
+/*
+CUCUMBERX TEMPLATE
+-------------------------------------------------- */
+
+body {
+	font-family: "BubbleGum", "IBM Plex Mono", monospace;
+}
+
+.bg-light {
+	background-color: $cucumber-color-1 !important;
+}
+.bg-white {
+	background-color: $cucumber-color-4 !important;
+}
 
 .custom-classname.btn-primary {
 	background-color: green;
@@ -129,8 +154,7 @@ html {
 
 /* Navbar
 -------------------------------------------------- */
-.multiversx-logo {
-	width: 85px;
+.cucumberx-logo {
 	height: 25px;
 }
 

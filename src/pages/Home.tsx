@@ -12,12 +12,10 @@ const HomePage = () => {
 					<div className="card shadow-sm rounded p-4 border-0">
 						<div className="card-body text-center">
 							<h2 className="mb-3" data-testid="title">
-								{dAppName}
+								CucumberX {dAppName}
 							</h2>
 
 							<p className="mb-3">
-								NFT Staking dApp
-								<br />
 								Login using your MultiversX wallet.
 							</p>
 

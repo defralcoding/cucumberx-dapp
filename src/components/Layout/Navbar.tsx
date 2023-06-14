@@ -55,6 +55,30 @@ export const Navbar = () => {
 							</NavItem>
 							*/}
 							<NavItem>
+								<a
+									href="https://docs.cucumberx.com"
+									className="btn btn-primary mr-2"
+								>
+									Whitepaper
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com/free-cucumberx-really/"
+									className="btn btn-primary mr-2"
+								>
+									Free NFT
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com"
+									className="btn btn-primary mr-2"
+								>
+									Home
+								</a>
+							</NavItem>
+							<NavItem>
 								<button
 									className="btn btn-primary"
 									onClick={handleLogout}

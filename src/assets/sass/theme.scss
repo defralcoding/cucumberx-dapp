@@ -45,7 +45,7 @@ $a: #1392ff;
 .dapp-core-component__main__btn-primary {
 	background-color: $primary !important;
 	border-color: $primary !important;
-	color: white !important;
+	color: $secondary !important;
 }
 
 .dapp-core-component__addressTableStyles__ledger-address-table-header,
@@ -88,6 +88,10 @@ nav {
 
 .custom-classname.btn-primary {
 	background-color: green;
+}
+
+.btn-primary {
+	color: $secondary !important;
 }
 
 /* Personalized

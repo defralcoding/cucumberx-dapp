@@ -304,7 +304,7 @@ export const Dashboard = () => {
 							{section === Section.staked && (
 								<>
 									<button
-										className="btn btn-lg px-4 btn-outline-primary"
+										className="btn btn-lg px-4 btn-primary"
 										onClick={() => unstakeNfts()}
 										disabled={
 											stakedNfts.filter(
@@ -315,7 +315,7 @@ export const Dashboard = () => {
 										Unstake
 									</button>
 									<button
-										className="btn btn-lg px-4 ml-md-1 btn-outline-primary"
+										className="btn btn-lg px-4 ml-md-1 btn-primary"
 										onClick={() => unstakeNfts(true)}
 										disabled={stakedNfts.length === 0}
 									>
@@ -327,7 +327,7 @@ export const Dashboard = () => {
 							{section === Section.wallet && (
 								<>
 									<button
-										className="btn btn-lg px-4 btn-outline-primary"
+										className="btn btn-lg px-4 btn-primary"
 										onClick={() => stakeNfts()}
 										disabled={
 											walletNfts.filter(
@@ -338,7 +338,7 @@ export const Dashboard = () => {
 										Stake
 									</button>
 									<button
-										className="btn btn-lg px-4 ml-1 btn-outline-primary"
+										className="btn btn-lg px-4 ml-1 btn-primary"
 										onClick={() => stakeNfts(true)}
 										disabled={walletNfts.length === 0}
 									>

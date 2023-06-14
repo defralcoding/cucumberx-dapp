@@ -5,16 +5,15 @@
 	src: url("../Bubblegum.ttf");
 }
 
-$cucumber-color-1: #00d084;
-$cucumber-color-2: #ffe97d;
-$cucumber-color-3: #d1d1e1;
+$cucumber-color-1: #24481a;
+$cucumber-color-2: #e3fdce;
 $cucumber-color-4: #c0ebf1;
 
-$body: #000;
+$body: $cucumber-color-1;
 $headings-font-weight: 300 !important;
-$primary: #9dff20;
-$secondary: $cucumber-color-3;
-$light: $cucumber-color-3;
+$primary: $cucumber-color-1;
+$secondary: $cucumber-color-2;
+$light: $cucumber-color-2;
 $card-border-radius: 0.75rem;
 $card-inner-border-radius: subtract($card-border-radius, 1px);
 
@@ -46,7 +45,7 @@ $a: #1392ff;
 .dapp-core-component__main__btn-primary {
 	background-color: $primary !important;
 	border-color: $primary !important;
-	color: #000 !important;
+	color: white !important;
 }
 
 .dapp-core-component__addressTableStyles__ledger-address-table-header,
@@ -72,18 +71,19 @@ CUCUMBERX TEMPLATE
 
 body {
 	font-family: "BubbleGum", "IBM Plex Mono", monospace;
+	color: $body;
 }
 
 .bg-light {
-	background-color: $cucumber-color-1 !important;
+	background-color: $cucumber-color-2 !important;
 }
 
-.bg-white {
-	background-color: $cucumber-color-4 !important;
+nav {
+	background-color: $cucumber-color-2 !important;
 }
 
 .card {
-	background-color: $cucumber-color-3 !important;
+	background-color: $cucumber-color-4 !important;
 }
 
 .custom-classname.btn-primary {
@@ -156,7 +156,7 @@ html {
 /* Navbar
 -------------------------------------------------- */
 .cucumberx-logo {
-	height: 25px;
+	width: 150px;
 }
 
 .dapp-name {
@@ -340,8 +340,6 @@ footer {
 		line-height: 1.155rem;
 
 		a {
-			color: $black;
-
 			&:hover {
 				color: $black;
 			}

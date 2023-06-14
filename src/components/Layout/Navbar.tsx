@@ -6,14 +6,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Navbar as BsNavbar, NavItem, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { dAppName } from "config";
+import { dAppName, adminAddresses } from "config";
 import { logout } from "helpers";
-import { useGetIsLoggedIn } from "hooks";
+import { useGetIsLoggedIn, useGetAccount } from "hooks";
 import { routeNames } from "routes";
 import CucumberXLogo from "../../assets/img/logo.png";
 
 export const Navbar = () => {
 	const isLoggedIn = useGetIsLoggedIn();
+	const { address } = useGetAccount();
 
 	const handleLogout = () => {
 		logout(`${window.location.origin}/unlock`);
@@ -33,6 +34,16 @@ export const Navbar = () => {
 				<Nav className="ml-auto">
 					{isLoggedIn && (
 						<>
+							{adminAddresses.includes(address) && (
+								<NavItem>
+									<Link
+										to={routeNames.adminSettings}
+										className="btn btn-primary mr-2"
+									>
+										Admin Settings
+									</Link>
+								</NavItem>
+							)}
 							{/*
 							<NavItem>
 								<Link to={routeNames.home} className="nav-link">

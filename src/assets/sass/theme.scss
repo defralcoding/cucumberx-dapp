@@ -14,7 +14,7 @@ $body: #000;
 $headings-font-weight: 300 !important;
 $primary: #9dff20;
 $secondary: $cucumber-color-3;
-$light: #fafafa;
+$light: $cucumber-color-3;
 $card-border-radius: 0.75rem;
 $card-inner-border-radius: subtract($card-border-radius, 1px);
 
@@ -24,11 +24,10 @@ $a: #1392ff;
 /** MULTIVERSX DAPP CORE COMPONENTS
 -------------------------------------------------- */
 
-/*
 .dapp-core-component__transactionsToastList-styles__toastWrapper,
 .dapp-core-component__dappModalStyles__dappModalBody,
 .dapp-core-component__dappModalStyles__dappModalContent {
-	background-color: $mxbackground !important;
+	background-color: $cucumber-color-4 !important;
 	border-color: rgba(255, 255, 255, 0.201267) !important;
 }
 
@@ -38,8 +37,10 @@ $a: #1392ff;
 }
 
 .dapp-core-component__transactionToast-styles__close,
-.dapp-core-component__addressTableStyles__ledger-address-table-navigation-button {
-	color: $light !important;
+.dapp-core-component__addressTableStyles__ledger-address-table-navigation-button,
+.dapp-core-component__dappModalStyles__dappModalCloseButton {
+	color: $body !important;
+	background-color: $cucumber-color-4 !important;
 }
 
 .dapp-core-component__main__btn-primary {
@@ -48,18 +49,12 @@ $a: #1392ff;
 	color: #000 !important;
 }
 
-.dapp-core-component__dappModalStyles__dappModalCloseButton {
-	background-color: $mxbackground !important;
-	color: $light !important;
-}
-
 .dapp-core-component__addressTableStyles__ledger-address-table-header,
 .dapp-core-component__confirmAddressStyles__ledger-confirm-address-data,
 .dapp-core-component__main__textarea {
 	background-color: $secondary !important;
-	color: $light !important;
+	color: $body !important;
 }
-*/
 
 /* Do not move the imports from here.
 Override Bootstrap variables only above.
@@ -82,8 +77,13 @@ body {
 .bg-light {
 	background-color: $cucumber-color-1 !important;
 }
+
 .bg-white {
 	background-color: $cucumber-color-4 !important;
+}
+
+.card {
+	background-color: $cucumber-color-3 !important;
 }
 
 .custom-classname.btn-primary {
@@ -102,8 +102,9 @@ body {
 	place-content: flex-start space-evenly;
 
 	.card-nft {
-		max-width: 225px; //TODO mettere max-width
+		max-width: 225px;
 		position: relative;
+		background-color: white !important;
 	}
 }
 

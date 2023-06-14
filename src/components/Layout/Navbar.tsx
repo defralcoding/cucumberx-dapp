@@ -20,7 +20,7 @@ export const Navbar = () => {
 	};
 
 	return (
-		<BsNavbar className="bg-white border-bottom px-4 py-3">
+		<BsNavbar className="bg-white px-4 py-3">
 			<div className="container-fluid">
 				<Link
 					className="d-flex align-items-center navbar-brand mr-0"

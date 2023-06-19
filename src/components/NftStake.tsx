@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
-import { contractAddress, collectionIdentifier, rewardToken } from "config";
+import {
+	nftStakingContractAddress,
+	collectionIdentifier,
+	rewardToken,
+} from "config";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
@@ -74,7 +78,7 @@ export const NftStake = () => {
 
 	const fetchStakedNfts = async () => {
 		apiNetworkProvider
-			.getAccountStakedNfts(address, contractAddress)
+			.getAccountStakedNfts(address, nftStakingContractAddress)
 			.then((_stakedPositions) => {
 				if (_stakedPositions.length === 0) {
 					setStakedNfts([]);
@@ -129,7 +133,7 @@ export const NftStake = () => {
 
 	const fetchRewards = async () => {
 		apiNetworkProvider
-			.getAccountRewards(address, contractAddress)
+			.getAccountRewards(address, nftStakingContractAddress)
 			.then((res) => {
 				setRewards(res);
 				setError((prev) => ({ ...prev, rewards: undefined }));
@@ -151,7 +155,7 @@ export const NftStake = () => {
 		const payload =
 			new MultiESDTNFTTransferPayloadBuilder()
 				.setPayments(tokenPayments)
-				.setDestination(new Address(contractAddress))
+				.setDestination(new Address(nftStakingContractAddress))
 				.build()
 				.toString() +
 			"@" +
@@ -190,7 +194,7 @@ export const NftStake = () => {
 			transactions: {
 				value: 0,
 				data: payload,
-				receiver: contractAddress,
+				receiver: nftStakingContractAddress,
 				gasLimit: 4_000_000 + 2_000_000 * nftsToUnstake.length,
 			},
 			transactionsDisplayInfo: {
@@ -208,7 +212,7 @@ export const NftStake = () => {
 			transactions: {
 				value: 0,
 				data: "claim_rewards",
-				receiver: contractAddress,
+				receiver: nftStakingContractAddress,
 				gasLimit: "20000000",
 			},
 			transactionsDisplayInfo: {
@@ -272,7 +276,7 @@ export const NftStake = () => {
 							.dividedBy(10 ** rewardToken.decimals)
 							.toNumber()}
 						decimals={rewardToken.decimalsToDisplay}
-						duration={6}
+						duration={2}
 						useEasing={true}
 						preserveValue={true}
 						prefix="Rewards: "

@@ -1,10 +1,19 @@
 /* Bootstrap overrides
 -------------------------------------------------- */
+@font-face {
+	font-family: BubbleGum;
+	src: url("../Bubblegum.ttf");
+}
 
-$body: #000;
+$cucumber-color-1: #24481a;
+$cucumber-color-2: #e3fdce;
+$cucumber-color-4: #c0ebf1;
+
+$body: $cucumber-color-1;
 $headings-font-weight: 300 !important;
-$primary: #1b46c2;
-$light: #fafafa;
+$primary: $cucumber-color-1;
+$secondary: $cucumber-color-2;
+$light: $cucumber-color-2;
 $card-border-radius: 0.75rem;
 $card-inner-border-radius: subtract($card-border-radius, 1px);
 
@@ -14,11 +23,10 @@ $a: #1392ff;
 /** MULTIVERSX DAPP CORE COMPONENTS
 -------------------------------------------------- */
 
-/*
 .dapp-core-component__transactionsToastList-styles__toastWrapper,
 .dapp-core-component__dappModalStyles__dappModalBody,
 .dapp-core-component__dappModalStyles__dappModalContent {
-	background-color: $mxbackground !important;
+	background-color: $cucumber-color-4 !important;
 	border-color: rgba(255, 255, 255, 0.201267) !important;
 }
 
@@ -28,28 +36,24 @@ $a: #1392ff;
 }
 
 .dapp-core-component__transactionToast-styles__close,
-.dapp-core-component__addressTableStyles__ledger-address-table-navigation-button {
-	color: $light !important;
+.dapp-core-component__addressTableStyles__ledger-address-table-navigation-button,
+.dapp-core-component__dappModalStyles__dappModalCloseButton {
+	color: $body !important;
+	background-color: $cucumber-color-4 !important;
 }
 
 .dapp-core-component__main__btn-primary {
 	background-color: $primary !important;
 	border-color: $primary !important;
-	color: #000 !important;
-}
-
-.dapp-core-component__dappModalStyles__dappModalCloseButton {
-	background-color: $mxbackground !important;
-	color: $light !important;
+	color: $secondary !important;
 }
 
 .dapp-core-component__addressTableStyles__ledger-address-table-header,
 .dapp-core-component__confirmAddressStyles__ledger-confirm-address-data,
 .dapp-core-component__main__textarea {
 	background-color: $secondary !important;
-	color: $light !important;
+	color: $body !important;
 }
-*/
 
 /* Do not move the imports from here.
 Override Bootstrap variables only above.
@@ -61,8 +65,33 @@ Override Bootstrap variables only above.
 
 @import "~bootstrap/scss/reboot";
 
+/*
+CUCUMBERX TEMPLATE
+-------------------------------------------------- */
+
+body {
+	font-family: "BubbleGum", "IBM Plex Mono", monospace;
+	color: $body;
+}
+
+.bg-light {
+	background-color: $cucumber-color-2 !important;
+}
+
+nav {
+	background-color: $cucumber-color-2 !important;
+}
+
+.card {
+	background-color: $cucumber-color-4 !important;
+}
+
 .custom-classname.btn-primary {
 	background-color: green;
+}
+
+.btn-primary {
+	color: $secondary !important;
 }
 
 /* Personalized
@@ -77,8 +106,9 @@ Override Bootstrap variables only above.
 	place-content: flex-start space-evenly;
 
 	.card-nft {
-		max-width: 225px; //TODO mettere max-width
+		max-width: 225px;
 		position: relative;
+		background-color: white !important;
 	}
 }
 
@@ -129,9 +159,8 @@ html {
 
 /* Navbar
 -------------------------------------------------- */
-.multiversx-logo {
-	width: 85px;
-	height: 25px;
+.cucumberx-logo {
+	width: 150px;
 }
 
 .dapp-name {
@@ -315,8 +344,6 @@ footer {
 		line-height: 1.155rem;
 
 		a {
-			color: $black;
-
 			&:hover {
 				color: $black;
 			}

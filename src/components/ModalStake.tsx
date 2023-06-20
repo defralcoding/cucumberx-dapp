@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Modal from "react-bootstrap/Modal";
 import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
@@ -7,9 +7,16 @@ import {
 	ESDTTransferPayloadBuilder,
 	Address,
 } from "@multiversx/sdk-core";
+import { FormatAmount } from "@multiversx/sdk-dapp/UI";
+import {
+	useGetAccount,
+	useGetActiveTransactionsStatus,
+	useGetNetworkConfig,
+} from "hooks";
 import { string2hex } from "helpers";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
+import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 import { tokenStakingContractAddress } from "config";
 
 type ModalStakeProps = {
@@ -25,6 +32,12 @@ export function ModalStake({
 	setShow,
 	alreadyStaked,
 }: ModalStakeProps) {
+	const {
+		network: { apiAddress },
+	} = useGetNetworkConfig();
+	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
+	const { address } = useGetAccount();
+
 	const handleClose = () => {
 		setShow(false);
 		setAmount("");
@@ -32,10 +45,26 @@ export function ModalStake({
 	const handleShow = () => setShow(true);
 
 	const [amount, setAmount] = useState("");
+	const [balance, setBalance] = useState<BigNumber | undefined>();
+
+	const isAmountValid = useMemo(() => {
+		if (
+			new BigNumber(amount)
+				.multipliedBy(10 ** token.decimals)
+				.isGreaterThan(balance || new BigNumber(0))
+		) {
+			return false;
+		}
+		return true;
+	}, [amount, balance]);
+
+	const isInputValid = useMemo(() => {
+		if (balance === undefined) return false;
+		if (amount === "") return false;
+		return isAmountValid;
+	}, [amount, balance]);
 
 	const onStake = async () => {
-		//TODO check if amount > balance
-
 		const payload =
 			new ESDTTransferPayloadBuilder()
 				.setPayment(
@@ -69,6 +98,18 @@ export function ModalStake({
 		handleClose();
 	};
 
+	const fetchBalance = async () => {
+		const balance = await apiNetworkProvider.getAccountTokenBalance(
+			address,
+			token.identifier
+		);
+		setBalance(balance);
+	};
+
+	useEffect(() => {
+		fetchBalance();
+	}, []);
+
 	//TODO fix close button
 	return (
 		<>
@@ -80,7 +121,10 @@ export function ModalStake({
 					<div className="input-group">
 						<input
 							type="number"
-							className="form-control form-control-lg"
+							className={
+								"form-control form-control-lg " +
+								(isAmountValid ? "" : "is-invalid")
+							}
 							placeholder="Amount"
 							value={amount}
 							onChange={(e) => setAmount(e.target.value)}
@@ -91,8 +135,21 @@ export function ModalStake({
 							</span>
 						</div>
 					</div>
+					{!isAmountValid && (
+						<p className="text-danger">Insufficient funds</p>
+					)}
 					<div className="d-flex justify-content-end">
-						<p className="mt-3">Available: 0 {token.symbol}</p>
+						<p>
+							Available:&nbsp;
+							<FormatAmount
+								value={(balance || new BigNumber(0)).toString(
+									10
+								)}
+								token={token.symbol}
+								digits={token.decimalsToDisplay}
+								decimals={token.decimals}
+							/>
+						</p>
 					</div>
 
 					{alreadyStaked.isGreaterThan(0) && (
@@ -110,8 +167,9 @@ export function ModalStake({
 						Cancel
 					</button>
 					<button
-						className="btn btn-lg btn-primary "
+						className="btn btn-lg btn-primary"
 						onClick={() => onStake()}
+						disabled={!isInputValid}
 					>
 						Stake
 					</button>

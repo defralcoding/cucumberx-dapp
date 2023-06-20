@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Modal from "react-bootstrap/Modal";
 import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
@@ -7,10 +7,16 @@ import {
 	ESDTTransferPayloadBuilder,
 	Address,
 } from "@multiversx/sdk-core";
-import { string2hex } from "helpers";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";
+import {
+	useGetAccount,
+	useGetActiveTransactionsStatus,
+	useGetNetworkConfig,
+} from "hooks";
+import { string2hex } from "helpers";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
+import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 import { tokenStakingContractAddress } from "config";
 
 type ModalStakeProps = {
@@ -26,6 +32,12 @@ export function ModalUnstake({
 	setShow,
 	alreadyStaked,
 }: ModalStakeProps) {
+	const {
+		network: { apiAddress },
+	} = useGetNetworkConfig();
+	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
+	const { address } = useGetAccount();
+
 	const handleClose = () => {
 		setShow(false);
 		setAmount("");
@@ -34,16 +46,26 @@ export function ModalUnstake({
 
 	const [amount, setAmount] = useState("");
 
+	const isAmountValid = useMemo(() => {
+		if (
+			new BigNumber(amount)
+				.multipliedBy(10 ** token.decimals)
+				.isGreaterThan(alreadyStaked)
+		) {
+			return false;
+		}
+		return true;
+	}, [amount, alreadyStaked]);
+
+	const isInputValid = useMemo(() => {
+		if (amount === "") return false;
+		return isAmountValid;
+	}, [amount, alreadyStaked]);
+
 	const onUnstake = async () => {
 		const _amount = new BigNumber(amount).multipliedBy(
 			10 ** token.decimals
 		);
-
-		if (_amount.gt(alreadyStaked)) {
-			alert("You can't unstake more than you have staked");
-			//TODO show error in a better way
-			return;
-		}
 
 		await refreshAccount();
 
@@ -75,7 +97,10 @@ export function ModalUnstake({
 					<div className="input-group">
 						<input
 							type="number"
-							className="form-control form-control-lg"
+							className={
+								"form-control form-control-lg " +
+								(isAmountValid ? "" : "is-invalid")
+							}
 							placeholder="Amount"
 							value={amount}
 							onChange={(e) => setAmount(e.target.value)}
@@ -86,8 +111,11 @@ export function ModalUnstake({
 							</span>
 						</div>
 					</div>
+					{!isAmountValid && (
+						<p className="text-danger">Insufficient funds</p>
+					)}
 					<div className="d-flex justify-content-end">
-						<p className="mt-3">
+						<p>
 							Staked:&nbsp;
 							<FormatAmount
 								value={alreadyStaked.toString(10)}
@@ -108,8 +136,9 @@ export function ModalUnstake({
 						Cancel
 					</button>
 					<button
-						className="btn btn-lg btn-primary "
+						className="btn btn-lg btn-primary"
 						onClick={() => onUnstake()}
+						disabled={!isInputValid}
 					>
 						Unstake
 					</button>

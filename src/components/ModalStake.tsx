@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Modal from "react-bootstrap/Modal";
 import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
@@ -47,19 +47,24 @@ export function ModalStake({
 	const [amount, setAmount] = useState("");
 	const [balance, setBalance] = useState<BigNumber | undefined>();
 
-	const onStake = async () => {
-		if (balance === undefined) return;
-		if (amount === "") return;
+	const isAmountValid = useMemo(() => {
 		if (
 			new BigNumber(amount)
 				.multipliedBy(10 ** token.decimals)
-				.isGreaterThan(balance)
+				.isGreaterThan(balance || new BigNumber(0))
 		) {
-			alert("Amount is greater than balance");
-			//TODO show error in a better way
-			return;
+			return false;
 		}
+		return true;
+	}, [amount, balance]);
 
+	const isInputValid = useMemo(() => {
+		if (balance === undefined) return false;
+		if (amount === "") return false;
+		return isAmountValid;
+	}, [amount, balance]);
+
+	const onStake = async () => {
 		const payload =
 			new ESDTTransferPayloadBuilder()
 				.setPayment(
@@ -116,7 +121,10 @@ export function ModalStake({
 					<div className="input-group">
 						<input
 							type="number"
-							className="form-control form-control-lg"
+							className={
+								"form-control form-control-lg " +
+								(isAmountValid ? "" : "is-invalid")
+							}
 							placeholder="Amount"
 							value={amount}
 							onChange={(e) => setAmount(e.target.value)}
@@ -127,8 +135,11 @@ export function ModalStake({
 							</span>
 						</div>
 					</div>
+					{!isAmountValid && (
+						<p className="text-danger">Insufficient funds</p>
+					)}
 					<div className="d-flex justify-content-end">
-						<p className="mt-3">
+						<p>
 							Available:&nbsp;
 							<FormatAmount
 								value={(balance || new BigNumber(0)).toString(
@@ -156,8 +167,9 @@ export function ModalStake({
 						Cancel
 					</button>
 					<button
-						className="btn btn-lg btn-primary "
+						className="btn btn-lg btn-primary"
 						onClick={() => onStake()}
+						disabled={!isInputValid}
 					>
 						Stake
 					</button>

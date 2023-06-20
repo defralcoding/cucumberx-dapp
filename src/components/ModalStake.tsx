@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
@@ -7,9 +7,16 @@ import {
 	ESDTTransferPayloadBuilder,
 	Address,
 } from "@multiversx/sdk-core";
+import { FormatAmount } from "@multiversx/sdk-dapp/UI";
+import {
+	useGetAccount,
+	useGetActiveTransactionsStatus,
+	useGetNetworkConfig,
+} from "hooks";
 import { string2hex } from "helpers";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
+import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 import { tokenStakingContractAddress } from "config";
 
 type ModalStakeProps = {
@@ -25,6 +32,12 @@ export function ModalStake({
 	setShow,
 	alreadyStaked,
 }: ModalStakeProps) {
+	const {
+		network: { apiAddress },
+	} = useGetNetworkConfig();
+	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
+	const { address } = useGetAccount();
+
 	const handleClose = () => {
 		setShow(false);
 		setAmount("");
@@ -32,9 +45,20 @@ export function ModalStake({
 	const handleShow = () => setShow(true);
 
 	const [amount, setAmount] = useState("");
+	const [balance, setBalance] = useState<BigNumber | undefined>();
 
 	const onStake = async () => {
-		//TODO check if amount > balance
+		if (balance === undefined) return;
+		if (amount === "") return;
+		if (
+			new BigNumber(amount)
+				.multipliedBy(10 ** token.decimals)
+				.isGreaterThan(balance)
+		) {
+			alert("Amount is greater than balance");
+			//TODO show error in a better way
+			return;
+		}
 
 		const payload =
 			new ESDTTransferPayloadBuilder()
@@ -69,6 +93,18 @@ export function ModalStake({
 		handleClose();
 	};
 
+	const fetchBalance = async () => {
+		const balance = await apiNetworkProvider.getAccountTokenBalance(
+			address,
+			token.identifier
+		);
+		setBalance(balance);
+	};
+
+	useEffect(() => {
+		fetchBalance();
+	}, []);
+
 	//TODO fix close button
 	return (
 		<>
@@ -92,7 +128,17 @@ export function ModalStake({
 						</div>
 					</div>
 					<div className="d-flex justify-content-end">
-						<p className="mt-3">Available: 0 {token.symbol}</p>
+						<p className="mt-3">
+							Available:&nbsp;
+							<FormatAmount
+								value={(balance || new BigNumber(0)).toString(
+									10
+								)}
+								token={token.symbol}
+								digits={token.decimalsToDisplay}
+								decimals={token.decimals}
+							/>
+						</p>
 					</div>
 
 					{alreadyStaked.isGreaterThan(0) && (

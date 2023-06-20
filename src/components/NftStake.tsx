@@ -49,7 +49,7 @@ export const NftStake = () => {
 	const { success, fail } = useGetActiveTransactionsStatus();
 
 	const [section, setSection] = useState<Section>(Section.staked);
-	const [stakedNfts, setStakedNfts] = useState<NonFungibleToken[]>([]); //TODO creare tipo
+	const [stakedNfts, setStakedNfts] = useState<NonFungibleToken[]>([]);
 	const [walletNfts, setWalletNfts] = useState<NonFungibleToken[]>([]);
 
 	const [rewards, setRewards] = useState<BigNumber | undefined>();

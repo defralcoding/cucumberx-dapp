@@ -40,6 +40,16 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 		return response;
 	}
 
+	async getAccountTokenBalance(
+		address: string,
+		token: string
+	): Promise<BigNumber> {
+		const response = await this.doGetGeneric(
+			`accounts/${address}/tokens/${token}`
+		);
+		return new BigNumber(response.balance);
+	}
+
 	async getAccountAllNfts(address: string): Promise<[any]> {
 		const response = await this.doGetGeneric(
 			`accounts/${address}/nfts?size=10000&excludeMetaESDT=true`

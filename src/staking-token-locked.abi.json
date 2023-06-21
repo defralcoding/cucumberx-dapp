@@ -38,16 +38,11 @@
                 "*"
             ],
             "inputs": [],
-            "outputs": []
-        },
-        {
-            "name": "stake_multiple",
-            "mutability": "mutable",
-            "payableInTokens": [
-                "*"
-            ],
-            "inputs": [],
-            "outputs": []
+            "outputs": [
+                {
+                    "type": "u64"
+                }
+            ]
         },
         {
             "name": "calculateRewardsForUser",
@@ -75,20 +70,8 @@
             "mutability": "mutable",
             "inputs": [
                 {
-                    "name": "nonce",
+                    "name": "id",
                     "type": "u64"
-                }
-            ],
-            "outputs": []
-        },
-        {
-            "name": "unstake_multiple",
-            "mutability": "mutable",
-            "inputs": [
-                {
-                    "name": "nonces_to_unstake",
-                    "type": "variadic<u64>",
-                    "multi_arg": true
                 }
             ],
             "outputs": []
@@ -134,12 +117,22 @@
             ]
         },
         {
-            "name": "getTokensPerDay",
+            "name": "getApr",
             "mutability": "readonly",
             "inputs": [],
             "outputs": [
                 {
-                    "type": "BigUint"
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "getLockDays",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
                 }
             ]
         },
@@ -167,6 +160,16 @@
                 {
                     "type": "variadic<Address>",
                     "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getLastId",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
                 }
             ]
         },
@@ -205,12 +208,23 @@
             "outputs": []
         },
         {
-            "name": "set_tokens_per_day",
+            "name": "set_apr",
             "mutability": "mutable",
             "inputs": [
                 {
-                    "name": "tokens_per_day",
-                    "type": "BigUint"
+                    "name": "apr",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "set_lock_days",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "lock_days",
+                    "type": "u64"
                 }
             ],
             "outputs": []
@@ -223,11 +237,19 @@
             "type": "struct",
             "fields": [
                 {
-                    "name": "nonce",
+                    "name": "id",
                     "type": "u64"
                 },
                 {
+                    "name": "staked_amount",
+                    "type": "BigUint"
+                },
+                {
                     "name": "staked_epoch",
+                    "type": "u64"
+                },
+                {
+                    "name": "unlock_timestamp",
                     "type": "u64"
                 },
                 {

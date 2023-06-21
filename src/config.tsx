@@ -19,7 +19,7 @@ export const stakingToken: InternalToken = {
 export const rewardToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "CUMB",
-	identifier: "DEFRA-3961e1",
+	identifier: "XCUMB-da0e35",
 	decimals: 12,
 	decimalsToDisplay: 4,
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NftStake } from "components/NftStake";
 import { TokenStake } from "components/TokenStake";
+import { TokenLockedStake } from "components/TokenLockedStake";
 import { SectionSelector } from "components/SectionSelector";
 import { stakingToken, rewardToken } from "config";
 
@@ -37,10 +38,10 @@ export const Dashboard = () => {
 				/>
 			)}
 			{section === Section.lockedTokenStake && (
-				<TokenStake
+				<TokenLockedStake
 					scAddress="erd1qqqqqqqqqqqqqpgqxgcasq6e6lgnugenj6lmdwudp9ymgwcs4jwsu9hn6c"
 					stakingToken={stakingToken}
-					rewardToken={stakingToken}
+					rewardToken={rewardToken}
 				/>
 			)}
 		</div>

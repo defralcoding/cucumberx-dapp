@@ -34,7 +34,7 @@ export const Dashboard = () => {
 				<TokenStake
 					scAddress="erd1qqqqqqqqqqqqqpgqnx25cpxhurers4enwqtg3jgcfy8qcrnt4jws5g278q"
 					stakingToken={stakingToken}
-					rewardToken={stakingToken}
+					rewardToken={rewardToken}
 				/>
 			)}
 			{section === Section.lockedTokenStake && (

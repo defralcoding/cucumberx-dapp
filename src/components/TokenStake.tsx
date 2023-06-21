@@ -3,13 +3,6 @@ import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";
-import {
-	nftStakingContractAddress,
-	tokenStakingContractAddress,
-	stakingToken,
-	collectionIdentifier,
-	rewardToken,
-} from "config";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
@@ -28,6 +21,7 @@ import {
 	NonFungibleToken,
 	TokenStakingPosition,
 	defaultTokenStakingPosition,
+	InternalToken,
 } from "types";
 import CountUp from "react-countup";
 import { NftVisualizer } from "components/NftVisualizer";
@@ -49,7 +43,13 @@ type errorsType = {
 	generic: string | undefined;
 };
 
-export const TokenStake = () => {
+type Props = {
+	scAddress: string;
+	stakingToken: InternalToken;
+	rewardToken: InternalToken;
+};
+
+export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -81,7 +81,7 @@ export const TokenStake = () => {
 
 	const fetchStakedTokens = async () => {
 		apiNetworkProvider
-			.getAccountStakedTokens(address, tokenStakingContractAddress)
+			.getAccountStakedTokens(address, scAddress)
 			.then((_stakedPosition) => {
 				setStakingPosition(_stakedPosition);
 				setError((prev) => ({
@@ -100,7 +100,7 @@ export const TokenStake = () => {
 
 	const fetchRewards = async () => {
 		apiNetworkProvider
-			.getAccountRewards(address, tokenStakingContractAddress)
+			.getAccountRewards(address, scAddress)
 			.then((res) => {
 				setRewards(res);
 				setError((prev) => ({ ...prev, rewards: undefined }));
@@ -113,7 +113,7 @@ export const TokenStake = () => {
 
 	const fetchApr = async () => {
 		apiNetworkProvider
-			.getContractApr(tokenStakingContractAddress)
+			.getContractApr(scAddress)
 			.then((_apr) => {
 				setApr(_apr);
 				setError((prev) => ({
@@ -137,7 +137,7 @@ export const TokenStake = () => {
 			transactions: {
 				value: 0,
 				data: "claim_rewards",
-				receiver: tokenStakingContractAddress,
+				receiver: scAddress,
 				gasLimit: 20_000_000,
 			},
 			transactionsDisplayInfo: {

@@ -30,6 +30,11 @@ export type TokenStakingPosition = {
 	last_claimed_timestamp: number;
 };
 
+export type TokenLockedStakingPosition = TokenStakingPosition & {
+	id: number;
+	unlock_timestamp: number;
+};
+
 export const defaultTokenStakingPosition: TokenStakingPosition = {
 	staked_amount: new BigNumber(0),
 	staked_epoch: 0,

@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
-import {
-	nftStakingContractAddress,
-	collectionIdentifier,
-	rewardToken,
-} from "config";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
@@ -28,6 +23,7 @@ import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
 
 export const AdminSettings = () => {
+	/*
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -150,4 +146,7 @@ export const AdminSettings = () => {
 			</div>
 		</div>
 	);
+	*/
+
+	return <div>Under construction</div>;
 };

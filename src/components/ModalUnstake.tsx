@@ -17,13 +17,13 @@ import { string2hex } from "helpers";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
-import { tokenStakingContractAddress } from "config";
 
 type ModalStakeProps = {
 	token: InternalToken;
 	show: boolean;
 	setShow: any;
 	alreadyStaked: BigNumber;
+	scAddress: string;
 };
 
 export function ModalUnstake({
@@ -31,6 +31,7 @@ export function ModalUnstake({
 	show,
 	setShow,
 	alreadyStaked,
+	scAddress,
 }: ModalStakeProps) {
 	const {
 		network: { apiAddress },
@@ -73,7 +74,7 @@ export function ModalUnstake({
 			transactions: {
 				value: 0,
 				data: "unstake@" + _amount.toString(16),
-				receiver: tokenStakingContractAddress,
+				receiver: scAddress,
 				gasLimit: 10_000_000,
 			},
 			transactionsDisplayInfo: {

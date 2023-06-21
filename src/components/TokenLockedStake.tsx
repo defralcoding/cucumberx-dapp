@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
@@ -20,6 +20,7 @@ import {
 	ServerTransactionType,
 	NonFungibleToken,
 	TokenStakingPosition,
+	TokenLockedStakingPosition,
 	defaultTokenStakingPosition,
 	InternalToken,
 } from "types";
@@ -49,7 +50,11 @@ type Props = {
 	rewardToken: InternalToken;
 };
 
-export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
+export const TokenLockedStake = ({
+	scAddress,
+	stakingToken,
+	rewardToken,
+}: Props) => {
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -60,8 +65,9 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 
 	const [section, setSection] = useState<Section>(Section.staked);
 
-	const [stakingPosition, setStakingPosition] =
-		useState<TokenStakingPosition>(defaultTokenStakingPosition);
+	const [stakingPositions, setStakingPositions] = useState<
+		TokenLockedStakingPosition[]
+	>([]);
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
 	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
 
@@ -79,11 +85,19 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		generic: undefined,
 	});
 
+	const stakedAmount = useMemo(() => {
+		return stakingPositions.reduce(
+			(acc, curr) => acc.plus(curr.staked_amount),
+			new BigNumber(0)
+		);
+	}, [stakingPositions]);
+
 	const fetchStakedTokens = async () => {
 		apiNetworkProvider
-			.getAccountStakedTokens(address, scAddress)
-			.then((_stakedPosition) => {
-				setStakingPosition(_stakedPosition);
+			.getAccountStakedTokensLocked(address, scAddress)
+			.then((_stakedPositions) => {
+				console.log("stakedPosition", _stakedPositions);
+				setStakingPositions(_stakedPositions);
 				setError((prev) => ({
 					...prev,
 					staked: undefined,
@@ -149,6 +163,29 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		});
 	};
 
+	const unstake = async (stakingPosition: TokenLockedStakingPosition) => {
+		let hexId = stakingPosition.id.toString(16);
+		if (hexId.length % 2 != 0) {
+			hexId = "0" + hexId;
+		}
+
+		await refreshAccount();
+
+		const { sessionId } = await sendTransactions({
+			transactions: {
+				value: 0,
+				data: "unstake@" + hexId,
+				receiver: scAddress,
+				gasLimit: 10_000_000,
+			},
+			transactionsDisplayInfo: {
+				processingMessage: "Unstaking...",
+				errorMessage: "An error has occured during unstake",
+				successMessage: "Tokens unstaked successfully",
+			},
+		});
+	};
+
 	useEffect(() => {
 		if (success || fail) {
 			fetchStakedTokens();
@@ -184,92 +221,124 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 	//TODO in rewards countup, change stakingToken to rewardToken after changing the contract
 	return (
 		<>
-			<div className="bg-secondary p-4 mt-4">
-				<div className="text-center display-3 mb-4">
-					{!stakingPosition.staked_amount.isZero() || true ? (
-						<>
-							{error.rewards && !rewards && (
-								<PageState title="Sorry, we can't calculate your rewards. Please try again later." />
-							)}
-							{rewards && (
-								<CountUp
-									end={rewards
-										.dividedBy(10 ** stakingToken.decimals)
-										.toNumber()}
-									decimals={stakingToken.decimalsToDisplay}
-									duration={2}
-									useEasing={true}
-									preserveValue={true}
-									prefix="Rewards: "
-									suffix={" " + stakingToken.symbol}
-								/>
-							)}
-							<div>
-								<button
-									className="btn btn-lg btn-primary"
-									onClick={() => claimRewards()}
-									disabled={!rewards || rewards.isZero()}
-								>
-									Claim Rewards
-								</button>
-							</div>
-						</>
-					) : (
-						<p>Stake now and earn rewards!</p>
-					)}
-
-					<div className="mt-4 text-left">
-						<p>
-							<span className="display-3">APR:&nbsp;</span>
-							<span className="display-4">
-								{apr.toString()} %
-							</span>
-						</p>
-						<p>
-							<span className="display-3">Staked:&nbsp;</span>
-							<span className="display-4">
-								<FormatAmount
-									value={stakingPosition.staked_amount.toString(
-										10
-									)}
-									token={stakingToken.symbol}
-									digits={stakingToken.decimalsToDisplay}
-									decimals={stakingToken.decimals}
-								/>
-							</span>
-						</p>
+			<div className="bg-secondary p-4 mt-4 text-center">
+				{stakingPositions.length > 0 || true ? (
+					<div className="display-3">
+						{error.rewards && !rewards && (
+							<PageState title="Sorry, we can't calculate your rewards. Please try again later." />
+						)}
+						{rewards && (
+							<CountUp
+								end={rewards
+									.dividedBy(10 ** stakingToken.decimals)
+									.toNumber()}
+								decimals={stakingToken.decimalsToDisplay}
+								duration={2}
+								useEasing={true}
+								preserveValue={true}
+								prefix="Rewards: "
+								suffix={" " + stakingToken.symbol}
+							/>
+						)}
+						<div>
+							<button
+								className="btn btn-lg btn-primary "
+								onClick={() => claimRewards()}
+								disabled={!rewards || rewards.isZero()}
+							>
+								Claim Rewards
+							</button>
+						</div>
 					</div>
+				) : (
+					<p className="display-3">Stake now and earn rewards!</p>
+				)}
 
-					<div>
-						<button
-							className="btn btn-lg btn-primary mr-4"
-							onClick={() => setModalStakeShow(true)}
-						>
-							Stake
-						</button>
-						<button
-							className="btn btn-lg btn-primary"
-							onClick={() => setModalUnstakeShow(true)}
-							disabled={stakingPosition.staked_amount.isZero()}
-						>
-							Unstake
-						</button>
-					</div>
+				<div className="mt-4 text-left">
+					<p>
+						<span className="display-3">APR:&nbsp;</span>
+						<span className="display-4">{apr.toString()} %</span>
+					</p>
+					<p>
+						<span className="display-3">Staked:&nbsp;</span>
+						<span className="display-4">
+							<FormatAmount
+								value={stakedAmount.toString(10)}
+								token={stakingToken.symbol}
+								digits={stakingToken.decimalsToDisplay}
+								decimals={stakingToken.decimals}
+							/>
+						</span>
+					</p>
 				</div>
+
+				<div>
+					<button
+						className="btn btn-lg btn-primary"
+						onClick={() => setModalStakeShow(true)}
+					>
+						Stake
+					</button>
+				</div>
+
+				{stakingPositions.length > 0 && (
+					<div className="text-left">
+						<hr />
+						<h1>Positions:</h1>
+						{stakingPositions.map((position, index) => (
+							<div className="card p-3" key={index}>
+								<div className="d-flex justify-content-between align-items-center">
+									<div className="d-flex align-items-center">
+										<div className="d-flex flex-column">
+											<h3>
+												<FormatAmount
+													value={position.staked_amount.toString(
+														10
+													)}
+													token={stakingToken.symbol}
+													digits={
+														stakingToken.decimalsToDisplay
+													}
+													decimals={
+														stakingToken.decimals
+													}
+												/>
+											</h3>
+											<h3>
+												Unlocks:&nbsp;
+												<b>
+													{new Date(
+														position.unlock_timestamp *
+															1000
+													).toLocaleString()}
+												</b>
+											</h3>
+										</div>
+									</div>
+									<div className="d-flex align-items-center">
+										<button
+											className="btn btn-primary mr-4"
+											onClick={() => unstake(position)}
+											disabled={
+												position.unlock_timestamp >
+												Date.now() / 1000
+											}
+										>
+											Unstake
+										</button>
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
 			</div>
 
 			<ModalStake
 				token={stakingToken}
 				show={modalStakeShow}
 				setShow={setModalStakeShow}
-				alreadyStaked={stakingPosition.staked_amount}
-				scAddress={scAddress}
-			/>
-			<ModalUnstake
-				token={stakingToken}
-				show={modalUnstakeShow}
-				setShow={setModalUnstakeShow}
-				alreadyStaked={stakingPosition.staked_amount}
+				alreadyStaked={stakedAmount}
 				scAddress={scAddress}
 			/>
 		</>

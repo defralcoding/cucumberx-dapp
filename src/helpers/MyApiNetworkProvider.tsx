@@ -15,9 +15,11 @@ import {
 	NftStakingPosition,
 	TokenStakingPosition,
 	defaultTokenStakingPosition,
+	TokenLockedStakingPosition,
 } from "types";
 import stakingNftAbi from "staking-nft.abi.json";
 import stakingTokenAbi from "staking-token.abi.json";
+import stakingTokenLockedAbi from "staking-token-locked.abi.json";
 
 export class MyApiNetworkProvider extends ApiNetworkProvider {
 	async getAccountFromHerotag(herotag: string): Promise<string> {
@@ -141,6 +143,46 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 			};
 		}
 		return defaultTokenStakingPosition;
+	}
+
+	async getAccountStakedTokensLocked(
+		address: string,
+		contractAddress: string
+	): Promise<TokenLockedStakingPosition[]> {
+		const smartContract = new SmartContract({
+			address: new Address(contractAddress),
+			abi: new SmartContractAbi(
+				AbiRegistry.create(stakingTokenLockedAbi)
+			),
+		});
+
+		const interaction = smartContract.methods.getUserStaking([address]);
+		const query = interaction.check().buildQuery();
+		const queryResponse = await this.queryContract(query);
+		const firstValue = new ResultsParser().parseQueryResponse(
+			queryResponse,
+			interaction.getEndpoint()
+		).firstValue as VariadicValue;
+		if (firstValue) {
+			return firstValue.getItems().map((stakedPos) => {
+				return {
+					staked_amount: (stakedPos as Struct).getFieldValue(
+						"staked_amount"
+					),
+					staked_epoch: (stakedPos as Struct)
+						.getFieldValue("staked_epoch")
+						.toNumber(),
+					last_claimed_timestamp: (stakedPos as Struct)
+						.getFieldValue("last_claimed_timestamp")
+						.toNumber(),
+					id: (stakedPos as Struct).getFieldValue("id").toNumber(),
+					unlock_timestamp: (stakedPos as Struct)
+						.getFieldValue("unlock_timestamp")
+						.toNumber(),
+				};
+			});
+		}
+		return [];
 	}
 
 	async getAccountRewards(

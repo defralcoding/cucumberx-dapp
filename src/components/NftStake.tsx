@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
-import {
-	nftStakingContractAddress,
-	collectionIdentifier,
-	rewardToken,
-} from "config";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
@@ -20,7 +15,7 @@ import {
 	useGetActiveTransactionsStatus,
 	useGetNetworkConfig,
 } from "hooks";
-import { ServerTransactionType, NonFungibleToken } from "types";
+import { ServerTransactionType, NonFungibleToken, InternalToken } from "types";
 import CountUp from "react-countup";
 import { NftVisualizer } from "components/NftVisualizer";
 import { SectionSelector } from "components/SectionSelector";
@@ -39,7 +34,17 @@ type errorsType = {
 	generic: string | undefined;
 };
 
-export const NftStake = () => {
+type Props = {
+	scAddress: string;
+	collectionIdentifier: string;
+	rewardToken: InternalToken;
+};
+
+export const NftStake = ({
+	scAddress,
+	collectionIdentifier,
+	rewardToken,
+}: Props) => {
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -78,7 +83,7 @@ export const NftStake = () => {
 
 	const fetchStakedNfts = async () => {
 		apiNetworkProvider
-			.getAccountStakedNfts(address, nftStakingContractAddress)
+			.getAccountStakedNfts(address, scAddress)
 			.then((_stakedPositions) => {
 				if (_stakedPositions.length === 0) {
 					setStakedNfts([]);
@@ -133,7 +138,7 @@ export const NftStake = () => {
 
 	const fetchRewards = async () => {
 		apiNetworkProvider
-			.getAccountRewards(address, nftStakingContractAddress)
+			.getAccountRewards(address, scAddress)
 			.then((res) => {
 				setRewards(res);
 				setError((prev) => ({ ...prev, rewards: undefined }));
@@ -155,7 +160,7 @@ export const NftStake = () => {
 		const payload =
 			new MultiESDTNFTTransferPayloadBuilder()
 				.setPayments(tokenPayments)
-				.setDestination(new Address(nftStakingContractAddress))
+				.setDestination(new Address(scAddress))
 				.build()
 				.toString() +
 			"@" +
@@ -194,7 +199,7 @@ export const NftStake = () => {
 			transactions: {
 				value: 0,
 				data: payload,
-				receiver: nftStakingContractAddress,
+				receiver: scAddress,
 				gasLimit: 4_000_000 + 2_000_000 * nftsToUnstake.length,
 			},
 			transactionsDisplayInfo: {
@@ -212,7 +217,7 @@ export const NftStake = () => {
 			transactions: {
 				value: 0,
 				data: "claim_rewards",
-				receiver: nftStakingContractAddress,
+				receiver: scAddress,
 				gasLimit: "20000000",
 			},
 			transactionsDisplayInfo: {

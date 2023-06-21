@@ -20,7 +20,7 @@ export const rewardToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "CUMB",
 	identifier: "XCUMB-da0e35",
-	decimals: 12,
+	decimals: 18,
 	decimalsToDisplay: 4,
 };
 

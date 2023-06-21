@@ -262,12 +262,14 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 				show={modalStakeShow}
 				setShow={setModalStakeShow}
 				alreadyStaked={stakingPosition.staked_amount}
+				scAddress={scAddress}
 			/>
 			<ModalUnstake
 				token={stakingToken}
 				show={modalUnstakeShow}
 				setShow={setModalUnstakeShow}
 				alreadyStaked={stakingPosition.staked_amount}
+				scAddress={scAddress}
 			/>
 		</>
 	);

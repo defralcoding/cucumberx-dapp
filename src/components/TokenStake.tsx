@@ -181,7 +181,6 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		);
 	}
 
-	//TODO in rewards countup, change stakingToken to rewardToken after changing the contract
 	return (
 		<>
 			<div className="bg-secondary p-4 mt-4">
@@ -194,14 +193,14 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 							{rewards && (
 								<CountUp
 									end={rewards
-										.dividedBy(10 ** stakingToken.decimals)
+										.dividedBy(10 ** rewardToken.decimals)
 										.toNumber()}
-									decimals={stakingToken.decimalsToDisplay}
+									decimals={rewardToken.decimalsToDisplay}
 									duration={2}
 									useEasing={true}
 									preserveValue={true}
 									prefix="Rewards: "
-									suffix={" " + stakingToken.symbol}
+									suffix={" " + rewardToken.symbol}
 								/>
 							)}
 							<div>
@@ -220,12 +219,6 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 
 					<div className="mt-4 text-left">
 						<p>
-							<span className="display-3">APR:&nbsp;</span>
-							<span className="display-4">
-								{apr.toString()} %
-							</span>
-						</p>
-						<p>
 							<span className="display-3">Staked:&nbsp;</span>
 							<span className="display-4">
 								<FormatAmount
@@ -236,6 +229,12 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 									digits={stakingToken.decimalsToDisplay}
 									decimals={stakingToken.decimals}
 								/>
+							</span>
+						</p>
+						<p>
+							<span className="display-3">APR:&nbsp;</span>
+							<span className="display-4">
+								{apr.toString()} %
 							</span>
 						</p>
 					</div>

@@ -218,7 +218,6 @@ export const TokenLockedStake = ({
 		);
 	}
 
-	//TODO in rewards countup, change stakingToken to rewardToken after changing the contract
 	return (
 		<>
 			<div className="bg-secondary p-4 mt-4 text-center">
@@ -230,14 +229,14 @@ export const TokenLockedStake = ({
 						{rewards && (
 							<CountUp
 								end={rewards
-									.dividedBy(10 ** stakingToken.decimals)
+									.dividedBy(10 ** rewardToken.decimals)
 									.toNumber()}
-								decimals={stakingToken.decimalsToDisplay}
+								decimals={rewardToken.decimalsToDisplay}
 								duration={2}
 								useEasing={true}
 								preserveValue={true}
 								prefix="Rewards: "
-								suffix={" " + stakingToken.symbol}
+								suffix={" " + rewardToken.symbol}
 							/>
 						)}
 						<div>
@@ -256,10 +255,6 @@ export const TokenLockedStake = ({
 
 				<div className="mt-4 text-left">
 					<p>
-						<span className="display-3">APR:&nbsp;</span>
-						<span className="display-4">{apr.toString()} %</span>
-					</p>
-					<p>
 						<span className="display-3">Staked:&nbsp;</span>
 						<span className="display-4">
 							<FormatAmount
@@ -269,6 +264,10 @@ export const TokenLockedStake = ({
 								decimals={stakingToken.decimals}
 							/>
 						</span>
+					</p>
+					<p>
+						<span className="display-3">APR:&nbsp;</span>
+						<span className="display-4">{apr.toString()} %</span>
 					</p>
 				</div>
 

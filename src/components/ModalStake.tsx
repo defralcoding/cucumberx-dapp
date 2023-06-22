@@ -24,6 +24,7 @@ type ModalStakeProps = {
 	setShow: any;
 	alreadyStaked: BigNumber;
 	scAddress: string;
+	lockingDays?: number;
 };
 
 export function ModalStake({
@@ -32,6 +33,7 @@ export function ModalStake({
 	setShow,
 	alreadyStaked,
 	scAddress,
+	lockingDays,
 }: ModalStakeProps) {
 	const {
 		network: { apiAddress },
@@ -135,6 +137,20 @@ export function ModalStake({
 								{token.symbol}
 							</span>
 						</div>
+						<div className="input-group-append">
+							<button
+								className="btn btn-primary"
+								onClick={() =>
+									setAmount(
+										(balance || new BigNumber(0))
+											.dividedBy(10 ** token.decimals)
+											.toString(10)
+									)
+								}
+							>
+								MAX
+							</button>
+						</div>
 					</div>
 					{!isAmountValid && (
 						<p className="text-danger">Insufficient funds</p>
@@ -153,10 +169,19 @@ export function ModalStake({
 						</p>
 					</div>
 
-					{alreadyStaked.isGreaterThan(0) && (
+					{alreadyStaked.isGreaterThan(0) &&
+						lockingDays === undefined && (
+							<p>
+								By staking, your pending rewards will be
+								automatically claimed.
+							</p>
+						)}
+
+					{lockingDays !== undefined && (
 						<p>
-							By staking, your pending rewards will be
-							automatically claimed.
+							Your tokens will be&nbsp;
+							<b>locked for {lockingDays} days.</b> You will be
+							able to claim your rewards when you prefer.
 						</p>
 					)}
 				</Modal.Body>

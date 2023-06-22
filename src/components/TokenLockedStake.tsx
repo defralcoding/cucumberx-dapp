@@ -41,6 +41,7 @@ type errorsType = {
 	staked: string | undefined;
 	rewards: string | undefined;
 	apr: string | undefined;
+	lockingDays: string | undefined;
 	generic: string | undefined;
 };
 
@@ -70,6 +71,7 @@ export const TokenLockedStake = ({
 	>([]);
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
 	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
+	const [lockingDays, setLockingDays] = useState<number>(0);
 
 	const [modalStakeShow, setModalStakeShow] = useState(false);
 	const [modalUnstakeShow, setModalUnstakeShow] = useState(false);
@@ -82,6 +84,7 @@ export const TokenLockedStake = ({
 		staked: undefined,
 		rewards: undefined,
 		apr: undefined,
+		lockingDays: undefined,
 		generic: undefined,
 	});
 
@@ -145,6 +148,25 @@ export const TokenLockedStake = ({
 			});
 	};
 
+	const fetchLockingDays = async () => {
+		apiNetworkProvider
+			.getContractLockingDays(scAddress)
+			.then((_lockingDays) => {
+				setLockingDays(_lockingDays);
+				setError((prev) => ({
+					...prev,
+					lockingDays: undefined,
+				}));
+			})
+			.catch((err) => {
+				const { message } = err as AxiosError;
+				setError((prev) => ({ ...prev, lockingDays: message }));
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
+	};
+
 	const claimRewards = async () => {
 		await refreshAccount();
 
@@ -176,7 +198,7 @@ export const TokenLockedStake = ({
 				value: 0,
 				data: "unstake@" + hexId,
 				receiver: scAddress,
-				gasLimit: 10_000_000,
+				gasLimit: 12_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking...",
@@ -197,6 +219,7 @@ export const TokenLockedStake = ({
 		fetchStakedTokens();
 		fetchRewards();
 		fetchApr();
+		fetchLockingDays();
 		setInterval(function () {
 			fetchRewards();
 		}, 6000);
@@ -269,6 +292,10 @@ export const TokenLockedStake = ({
 						<span className="display-3">APR:&nbsp;</span>
 						<span className="display-4">{apr.toString()} %</span>
 					</p>
+					<p>
+						<span className="display-3">Lock days:&nbsp;</span>
+						<span className="display-4">{lockingDays}</span>
+					</p>
 				</div>
 
 				<div>
@@ -339,6 +366,7 @@ export const TokenLockedStake = ({
 				setShow={setModalStakeShow}
 				alreadyStaked={stakedAmount}
 				scAddress={scAddress}
+				lockingDays={lockingDays}
 			/>
 		</>
 	);

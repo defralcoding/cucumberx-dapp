@@ -75,7 +75,7 @@ export function ModalUnstake({
 				value: 0,
 				data: "unstake@" + _amount.toString(16),
 				receiver: scAddress,
-				gasLimit: 10_000_000,
+				gasLimit: 15_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking...",
@@ -110,6 +110,20 @@ export function ModalUnstake({
 							<span className="input-group-text">
 								{token.symbol}
 							</span>
+						</div>
+						<div className="input-group-append">
+							<button
+								className="btn btn-primary"
+								onClick={() =>
+									setAmount(
+										alreadyStaked
+											.dividedBy(10 ** token.decimals)
+											.toString(10)
+									)
+								}
+							>
+								MAX
+							</button>
 						</div>
 					</div>
 					{!isAmountValid && (

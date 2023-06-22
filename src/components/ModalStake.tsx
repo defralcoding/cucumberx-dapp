@@ -137,6 +137,20 @@ export function ModalStake({
 								{token.symbol}
 							</span>
 						</div>
+						<div className="input-group-append">
+							<button
+								className="btn btn-primary"
+								onClick={() =>
+									setAmount(
+										(balance || new BigNumber(0))
+											.dividedBy(10 ** token.decimals)
+											.toString(10)
+									)
+								}
+							>
+								MAX
+							</button>
+						</div>
 					</div>
 					{!isAmountValid && (
 						<p className="text-danger">Insufficient funds</p>

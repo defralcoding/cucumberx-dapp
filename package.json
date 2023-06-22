@@ -16,7 +16,7 @@
     "bootstrap": "4.6.2",
     "moment": "2.29.4",
     "react": "18.2.0",
-    "react-bootstrap": "2.1.2",
+    "react-bootstrap": "1.6.1",
     "react-countup": "^6.4.2",
     "react-dom": "18.2.0",
     "react-router-dom": "6.4.2",

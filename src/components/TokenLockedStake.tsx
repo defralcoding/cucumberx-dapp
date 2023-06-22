@@ -316,7 +316,7 @@ export const TokenLockedStake = ({
 						<h1>Positions:</h1>
 						{stakingPositions.map((position, index) => (
 							<div className="card p-3" key={index}>
-								<div className="d-flex justify-content-between align-items-center">
+								<div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
 									<div className="d-flex align-items-center">
 										<div className="d-flex flex-column">
 											<h3>
@@ -346,7 +346,7 @@ export const TokenLockedStake = ({
 									</div>
 									<div className="d-flex align-items-center">
 										<button
-											className="btn btn-primary mr-4"
+											className="btn btn-primary"
 											onClick={() => unstake(position)}
 											disabled={
 												position.unlock_timestamp >

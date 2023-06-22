@@ -25,7 +25,7 @@ export const Dashboard = () => {
 
 			{section === Section.nftStake && (
 				<NftStake
-					scAddress="erd1qqqqqqqqqqqqqpgq7ymsl3yn70z9863l02g6j8ttlewyungc4jws5cas66"
+					scAddress="erd1qqqqqqqqqqqqqpgqfh0g52epnu34mrhk9egapxdr0aneezy54jwswa6x7n"
 					collectionIdentifier="GIANT-1ed993"
 					rewardToken={rewardToken}
 				/>

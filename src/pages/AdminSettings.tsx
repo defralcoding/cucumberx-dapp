@@ -32,7 +32,7 @@ export const AdminSettings = () => {
 				<div className="bg-secondary p-4 mt-4">
 					<h1>NFT Staking</h1>
 					<DepositRewards
-						scAddress="erd1qqqqqqqqqqqqqpgqfh0g52epnu34mrhk9egapxdr0aneezy54jwswa6x7n"
+						scAddress="erd1qqqqqqqqqqqqqpgqpt97ps7w69ng3ynxpn3lq9fc0wj5u9hddn3qp4lqzu"
 						token={rewardToken}
 					/>
 

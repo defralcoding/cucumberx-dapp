@@ -2,7 +2,7 @@ import { InternalToken } from "types";
 
 export const dAppName = "Staking dApp";
 
-export const walletConnectV2ProjectId = "9b1a9564f91cb659ffe21b73d5c4e2d8";
+export const walletConnectV2ProjectId = "3c548c98b9468bbe281d39d716b77ce2";
 
 export const apiTimeout = 6000;
 export const transactionSize = 15;
@@ -11,7 +11,7 @@ export const TOOLS_API_URL = "https://tools.multiversx.com";
 export const stakingToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "CUMB",
-	identifier: "XCUMB-da0e35",
+	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 2,
 };
@@ -19,7 +19,7 @@ export const stakingToken: InternalToken = {
 export const rewardToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "CUMB",
-	identifier: "XCUMB-da0e35",
+	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 4,
 };

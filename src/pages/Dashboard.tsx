@@ -25,21 +25,21 @@ export const Dashboard = () => {
 
 			{section === Section.nftStake && (
 				<NftStake
-					scAddress="erd1qqqqqqqqqqqqqpgqfh0g52epnu34mrhk9egapxdr0aneezy54jwswa6x7n"
-					collectionIdentifier="GIANT-1ed993"
+					scAddress="erd1qqqqqqqqqqqqqpgqpt97ps7w69ng3ynxpn3lq9fc0wj5u9hddn3qp4lqzu"
+					collectionIdentifier="CUMBX-762eec"
 					rewardToken={rewardToken}
 				/>
 			)}
 			{section === Section.tokenStake && (
 				<TokenStake
-					scAddress="erd1qqqqqqqqqqqqqpgqnx25cpxhurers4enwqtg3jgcfy8qcrnt4jws5g278q"
+					scAddress="erd1qqqqqqqqqqqqqpgq8rl3293f5cus8u9scmdu796qycjnqgw9dn3qztkevg"
 					stakingToken={stakingToken}
 					rewardToken={rewardToken}
 				/>
 			)}
 			{section === Section.lockedTokenStake && (
 				<TokenLockedStake
-					scAddress="erd1qqqqqqqqqqqqqpgqxgcasq6e6lgnugenj6lmdwudp9ymgwcs4jwsu9hn6c"
+					scAddress="erd1qqqqqqqqqqqqqpgqk4pp8f5742f2w5nrz0zynnmwe0utp2gcdn3qhgh4xr"
 					stakingToken={stakingToken}
 					rewardToken={rewardToken}
 				/>

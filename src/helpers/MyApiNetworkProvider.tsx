@@ -227,6 +227,27 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 		}
 		return new BigNumber(0);
 	}
+
+	async getContractLockingDays(contractAddress: string): Promise<number> {
+		const smartContract = new SmartContract({
+			address: new Address(contractAddress),
+			abi: new SmartContractAbi(
+				AbiRegistry.create(stakingTokenLockedAbi)
+			),
+		});
+
+		const interaction = smartContract.methods.getLockDays([]);
+		const query = interaction.check().buildQuery();
+		const queryResponse = await this.queryContract(query);
+		const firstValue = new ResultsParser().parseQueryResponse(
+			queryResponse,
+			interaction.getEndpoint()
+		).firstValue;
+		if (firstValue) {
+			return (firstValue as NumericalValue).value.toNumber();
+		}
+		return 0;
+	}
 }
 
 /**

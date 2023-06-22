@@ -75,7 +75,7 @@ export function ModalUnstake({
 				value: 0,
 				data: "unstake@" + _amount.toString(16),
 				receiver: scAddress,
-				gasLimit: 10_000_000,
+				gasLimit: 15_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking...",

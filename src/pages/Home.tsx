@@ -11,9 +11,7 @@ const HomePage = () => {
 				<div className="col-12 col-md-8 col-lg-5 mx-auto">
 					<div className="card shadow-sm rounded p-4 border-0">
 						<div className="card-body text-center">
-							<h2 className="mb-3" data-testid="title">
-								{dAppName}
-							</h2>
+							<h2 className="mb-3">{dAppName}</h2>
 
 							<p className="mb-3">
 								NFT Staking dApp
@@ -24,7 +22,6 @@ const HomePage = () => {
 							<Link
 								to={routeNames.unlock}
 								className="btn btn-primary mt-3 text-white"
-								data-testid="loginBtn"
 							>
 								Login
 							</Link>

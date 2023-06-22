@@ -8,7 +8,7 @@ import { stakingToken, rewardToken } from "config";
 enum Section {
 	nftStake = "Stake NFT",
 	tokenStake = "Stake Token",
-	lockedTokenStake = "Locked Token Stake",
+	lockedTokenStake = "Stake Locked Token",
 }
 
 export const Dashboard = () => {
@@ -20,7 +20,7 @@ export const Dashboard = () => {
 				section={section}
 				sections={[...Object.values(Section)]}
 				setSection={setSection}
-				className="mr-5 w-100"
+				className="w-100"
 			/>
 
 			{section === Section.nftStake && (

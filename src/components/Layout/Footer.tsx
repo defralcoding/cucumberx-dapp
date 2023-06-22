@@ -10,9 +10,9 @@ export const Footer = () => {
 						target: "_blank",
 					}}
 					className="d-flex align-items-center"
-					href="https://tortuga-staking.com/"
+					href="https://cucumberx.com/"
 				>
-					Made with <HeartIcon className="mx-1" /> by Tortuga Staking
+					Made with <HeartIcon className="mx-1" /> by vegetables
 				</a>
 			</div>
 		</footer>

@@ -279,6 +279,7 @@ export const TokenLockedStake = ({
 				<div className="mt-4 text-left">
 					<p>
 						<span className="display-3">Staked:&nbsp;</span>
+						<br className="d-md-none" />
 						<span className="display-4">
 							<FormatAmount
 								value={stakedAmount.toString(10)}
@@ -290,10 +291,12 @@ export const TokenLockedStake = ({
 					</p>
 					<p>
 						<span className="display-3">APR:&nbsp;</span>
+						<br className="d-md-none" />
 						<span className="display-4">{apr.toString()} %</span>
 					</p>
 					<p>
 						<span className="display-3">Lock days:&nbsp;</span>
+						<br className="d-md-none" />
 						<span className="display-4">{lockingDays}</span>
 					</p>
 				</div>

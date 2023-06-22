@@ -220,6 +220,7 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 					<div className="mt-4 text-left">
 						<p>
 							<span className="display-3">Staked:&nbsp;</span>
+							<br className="d-md-none" />
 							<span className="display-4">
 								<FormatAmount
 									value={stakingPosition.staked_amount.toString(
@@ -233,6 +234,7 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 						</p>
 						<p>
 							<span className="display-3">APR:&nbsp;</span>
+							<br className="d-md-none" />
 							<span className="display-4">
 								{apr.toString()} %
 							</span>

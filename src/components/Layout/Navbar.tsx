@@ -10,7 +10,7 @@ import { dAppName, adminAddresses } from "config";
 import { logout } from "helpers";
 import { useGetIsLoggedIn, useGetAccount } from "hooks";
 import { routeNames } from "routes";
-import { ReactComponent as MultiversXLogo } from "../../assets/img/multiversx.svg";
+import CucumberXLogo from "../../assets/img/logo.png";
 
 export const Navbar = () => {
 	const isLoggedIn = useGetIsLoggedIn();
@@ -23,21 +23,18 @@ export const Navbar = () => {
 	};
 
 	return (
-		<BsNavbar
-			expand={navbarExpand}
-			className="bg-white border-bottom px-4 py-3"
-		>
+		<BsNavbar expand={navbarExpand} className="px-4 py-3">
 			<div className="container-fluid">
-				<BsNavbar.Brand>
-					<Link
-						className="d-flex align-items-center navbar-brand mr-0"
-						to={isLoggedIn ? routeNames.dashboard : routeNames.home}
-					>
-						<MultiversXLogo className="multiversx-logo" />
-						<span className="dapp-name text-muted">{dAppName}</span>
-					</Link>
+        <BsNavbar.Brand>
+				<Link
+					className="d-flex align-items-center navbar-brand mr-0"
+					to={isLoggedIn ? routeNames.dashboard : routeNames.home}
+				>
+					<img src={CucumberXLogo} className="cucumberx-logo" />
+					<span className="dapp-name text-muted">{dAppName}</span>
+				</Link>
 				</BsNavbar.Brand>
-
+        
 				<BsNavbar.Toggle aria-controls="responsive-navbar-nav" />
 
 				<BsNavbar.Collapse id="responsive-navbar-nav">
@@ -60,6 +57,30 @@ export const Navbar = () => {
 										</Link>
 									</NavItem>
 								)}
+                <NavItem>
+								<a
+									href="https://docs.cucumberx.com"
+									className="btn btn-primary mr-2"
+								>
+									Whitepaper
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com/free-cucumberx-really/"
+									className="btn btn-primary mr-2"
+								>
+									Free NFT
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com"
+									className="btn btn-primary mr-2"
+								>
+									Home
+								</a>
+							</NavItem>
 								<NavItem>
 									<button
 										className="btn btn-primary"
@@ -72,6 +93,7 @@ export const Navbar = () => {
 						)}
 					</Nav>
 				</BsNavbar.Collapse>
+
 			</div>
 		</BsNavbar>
 	);

@@ -32,4 +32,5 @@ export const sampleAuthenticatedDomains = [TOOLS_API_URL];
 export const adminAddresses = [
 	"erd19hcnc2djsjay3prvhuzr0phveducv93khj435pqjza73tcyu4jwsuqywdh",
 	"erd1g3dygd6kh2nt5kvkl6fpp3rp3y9ez5wfaxwwfzzkglwqn2aydn3q6vqkxk",
+	"erd1pnund9anqkrkma07af20q2s92ayv02ratks3ndsxdk3xsar2hlxqdsg9xg",
 ];

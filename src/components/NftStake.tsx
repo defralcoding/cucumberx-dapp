@@ -173,7 +173,7 @@ export const NftStake = ({
 				value: 0,
 				data: payload,
 				receiver: address,
-				gasLimit: 3_500_000 + 2_000_000 * nftsToStake.length,
+				gasLimit: 3_500_000 + 2_500_000 * nftsToStake.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Staking NFTs...",

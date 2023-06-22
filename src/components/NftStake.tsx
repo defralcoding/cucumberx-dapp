@@ -155,7 +155,7 @@ export const NftStake = ({
 		);
 
 		const tokenPayments: TokenPayment[] = nftsToStake.map((nft) =>
-			TokenPayment.nonFungible(nft.ticker, nft.nonce)
+			TokenPayment.nonFungible(nft.collection, nft.nonce)
 		);
 		const payload =
 			new MultiESDTNFTTransferPayloadBuilder()

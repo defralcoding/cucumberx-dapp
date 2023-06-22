@@ -22,7 +22,40 @@ import { SectionSelector } from "components/SectionSelector";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
 
+import { rewardToken } from "config";
+import { DepositRewards } from "components/Admin/DepositRewards";
+
 export const AdminSettings = () => {
+	return (
+		<div>
+			<div className="container">
+				<div className="bg-secondary p-4 mt-4">
+					<h1>NFT Staking</h1>
+					<DepositRewards
+						scAddress="erd1qqqqqqqqqqqqqpgqfh0g52epnu34mrhk9egapxdr0aneezy54jwswa6x7n"
+						token={rewardToken}
+					/>
+
+					<hr />
+
+					<h1>Token Staking</h1>
+					<DepositRewards
+						scAddress="erd1qqqqqqqqqqqqqpgq8rl3293f5cus8u9scmdu796qycjnqgw9dn3qztkevg"
+						token={rewardToken}
+					/>
+
+					<hr />
+
+					<h1>Token Locked Staking</h1>
+					<DepositRewards
+						scAddress="erd1qqqqqqqqqqqqqpgqk4pp8f5742f2w5nrz0zynnmwe0utp2gcdn3qhgh4xr"
+						token={rewardToken}
+					/>
+				</div>
+			</div>
+		</div>
+	);
+
 	/*
 	const {
 		network: { apiAddress },
@@ -147,6 +180,4 @@ export const AdminSettings = () => {
 		</div>
 	);
 	*/
-
-	return <div>Under construction</div>;
 };

@@ -220,9 +220,13 @@ export const TokenLockedStake = ({
 		fetchRewards();
 		fetchApr();
 		fetchLockingDays();
-		setInterval(function () {
+
+		const interval = setInterval(function () {
 			fetchRewards();
 		}, 6000);
+		return () => {
+			clearInterval(interval);
+		};
 	}, []);
 
 	if (isLoading) {

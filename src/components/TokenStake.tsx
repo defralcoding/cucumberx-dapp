@@ -160,9 +160,13 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		fetchStakedTokens();
 		fetchRewards();
 		fetchApr();
-		setInterval(function () {
+
+		const interval = setInterval(function () {
 			fetchRewards();
 		}, 6000);
+		return () => {
+			clearInterval(interval);
+		};
 	}, []);
 
 	if (isLoading) {

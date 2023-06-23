@@ -240,9 +240,13 @@ export const NftStake = ({
 		fetchStakedNfts();
 		fetchWalletNfts();
 		fetchRewards();
-		setInterval(function () {
+
+		const interval = setInterval(function () {
 			fetchRewards();
 		}, 6000);
+		return () => {
+			clearInterval(interval);
+		};
 	}, []);
 
 	useEffect(() => {

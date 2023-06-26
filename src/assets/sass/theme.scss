@@ -5,6 +5,16 @@
 	src: url("../Bubblegum.ttf");
 }
 
+@font-face {
+	font-family: MorningBreeze;
+	src: url("../MorningBreeze.otf");
+}
+
+@font-face {
+	font-family: MorningBreezeBold;
+	src: url("../MorningBreezeBold.otf");
+}
+
 $cucumber-color-1: #24481a;
 $cucumber-color-2: #e3fdce;
 $cucumber-color-4: #c0ebf1;
@@ -70,8 +80,16 @@ CUCUMBERX TEMPLATE
 -------------------------------------------------- */
 
 body {
-	font-family: "BubbleGum", "IBM Plex Mono", monospace;
+	font-family: "MorningBreeze", "IBM Plex Mono", monospace;
 	color: $body;
+}
+
+.font-MorningBreeze {
+	font-family: "MorningBreeze", "IBM Plex Mono", monospace;
+}
+
+.font-MorningBreezeBold {
+	font-family: "MorningBreezeBold", "IBM Plex Mono", monospace;
 }
 
 .bg-light {

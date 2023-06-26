@@ -1,7 +1,7 @@
 {
-  "name": "MultiversX dApp Template",
-  "short_name": "MultiversX dApp",
-  "description": "Easily add or update assets for a Token or NFT Collection on the MultiversX Blockchain",
+  "name": "CucumberX dApp",
+  "short_name": "CucumberX dApp",
+  "description": "This is a simple dApp, insert your cucumber and you will $CUMB",
   "icons": [
     {
       "src": "apple-touch-icon.png",

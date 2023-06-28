@@ -372,7 +372,7 @@ export const NftStake = ({
 					!error.staked && (
 						<PageState
 							icon={faGrip}
-							title="You don't have any staked NFT. Stake some from your wallet!"
+							title="You don't have any staked NFT. Please, put your hard cucumber into the staking pool, you'll like it!"
 						/>
 					)}
 				{section === Section.staked &&

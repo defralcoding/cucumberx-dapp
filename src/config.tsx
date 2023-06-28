@@ -1,6 +1,6 @@
 import { InternalToken } from "types";
 
-export const dAppName = "Staking dApp";
+export const dAppName = "GLORY HOLE";
 
 export const walletConnectV2ProjectId = "3c548c98b9468bbe281d39d716b77ce2";
 
@@ -10,7 +10,7 @@ export const TOOLS_API_URL = "https://tools.multiversx.com";
 
 export const stakingToken: InternalToken = {
 	name: "CucumberX",
-	symbol: "CUMB",
+	symbol: "$CUMB",
 	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 2,
@@ -18,7 +18,7 @@ export const stakingToken: InternalToken = {
 
 export const rewardToken: InternalToken = {
 	name: "CucumberX",
-	symbol: "CUMB",
+	symbol: "$CUMB",
 	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 4,

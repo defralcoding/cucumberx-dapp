@@ -50,9 +50,7 @@ export const NftStake = ({
 	} = useGetNetworkConfig();
 	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
 
-	//const { address } = useGetAccount();
-	const address =
-		"erd1kz86gzqp072337pgxaykqn6f5pez30gvu9tnz8cgm7x746ql6pgs8jhr98";
+	const { address } = useGetAccount();
 	const { success, fail } = useGetActiveTransactionsStatus();
 
 	const [section, setSection] = useState<Section>(Section.staked);

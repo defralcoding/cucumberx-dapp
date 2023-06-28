@@ -84,7 +84,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	async getAccountNftsCountFromCollection(
 		address: string,
 		collection: string
-	): Promise<[NonFungibleToken]> {
+	): Promise<number> {
 		const response = await this.doGetGeneric(
 			`accounts/${address}/nfts/count?size=10000&collections=${collection}`
 		);

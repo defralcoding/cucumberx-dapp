@@ -221,7 +221,7 @@ export const NftStake = ({
 				value: 0,
 				data: "claim_rewards",
 				receiver: scAddress,
-				gasLimit: 20_000_000,
+				gasLimit: 5_000_000 + 4_000_000 * stakedNfts.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Claiming rewards...",

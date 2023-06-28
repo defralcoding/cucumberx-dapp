@@ -50,7 +50,9 @@ export const NftStake = ({
 	} = useGetNetworkConfig();
 	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
 
-	const { address } = useGetAccount();
+	//const { address } = useGetAccount();
+	const address =
+		"erd1kz86gzqp072337pgxaykqn6f5pez30gvu9tnz8cgm7x746ql6pgs8jhr98";
 	const { success, fail } = useGetActiveTransactionsStatus();
 
 	const [section, setSection] = useState<Section>(Section.staked);
@@ -89,11 +91,14 @@ export const NftStake = ({
 					setStakedNfts([]);
 					return;
 				}
+				const stakedNonces = _stakedPositions
+					.map((sp) => sp.nonce.toString(16))
+					.map((nonce) =>
+						nonce.length % 2 === 1 ? "0" + nonce : nonce
+					);
+
 				apiNetworkProvider
-					.getNftsFromCollection(
-						collectionIdentifier,
-						_stakedPositions.map((sp) => sp.nonce.toString(16))
-					)
+					.getNftsFromCollection(collectionIdentifier, stakedNonces)
 					.then((_stakedNfts) => {
 						_stakedNfts.forEach((nft) => {
 							const stakedPosition = _stakedPositions.find(

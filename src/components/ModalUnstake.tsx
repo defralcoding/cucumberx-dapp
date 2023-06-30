@@ -67,13 +67,17 @@ export function ModalUnstake({
 		const _amount = new BigNumber(amount).multipliedBy(
 			10 ** token.decimals
 		);
+		let amountHex = _amount.toString(16);
+		if (amountHex.length % 2 !== 0) {
+			amountHex = "0" + amountHex;
+		}
 
 		await refreshAccount();
 
 		const { sessionId } = await sendTransactions({
 			transactions: {
 				value: 0,
-				data: "unstake@" + _amount.toString(16),
+				data: "unstake@" + amountHex,
 				receiver: scAddress,
 				gasLimit: 15_000_000,
 			},

@@ -89,11 +89,14 @@ export const NftStake = ({
 					setStakedNfts([]);
 					return;
 				}
+				const stakedNonces = _stakedPositions
+					.map((sp) => sp.nonce.toString(16))
+					.map((nonce) =>
+						nonce.length % 2 === 1 ? "0" + nonce : nonce
+					);
+
 				apiNetworkProvider
-					.getNftsFromCollection(
-						collectionIdentifier,
-						_stakedPositions.map((sp) => sp.nonce.toString(16))
-					)
+					.getNftsFromCollection(collectionIdentifier, stakedNonces)
 					.then((_stakedNfts) => {
 						_stakedNfts.forEach((nft) => {
 							const stakedPosition = _stakedPositions.find(
@@ -218,7 +221,7 @@ export const NftStake = ({
 				value: 0,
 				data: "claim_rewards",
 				receiver: scAddress,
-				gasLimit: 20_000_000,
+				gasLimit: 5_000_000 + 4_000_000 * stakedNfts.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Claiming rewards...",

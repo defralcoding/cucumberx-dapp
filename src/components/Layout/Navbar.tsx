@@ -41,6 +41,21 @@ export const Navbar = () => {
 					<Nav className="ml-auto">
 						<NavItem>
 							<a
+								href="https://xoxno.com/buy/VegetablArt/cucumberx"
+								className={
+									"btn btn-primary mb-2 mb-" +
+									navbarExpand +
+									"-0 mr-0 mr-" +
+									navbarExpand +
+									"-2"
+								}
+								target="_blank"
+							>
+								Buy Cucumber
+							</a>
+						</NavItem>
+						<NavItem>
+							<a
 								href="https://docs.cucumberx.com"
 								className={
 									"btn btn-primary mb-2 mb-" +

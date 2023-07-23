@@ -203,7 +203,7 @@ export const NftStake = ({
 				value: 0,
 				data: payload,
 				receiver: scAddress,
-				gasLimit: 5_000_000 + 4_000_000 * nftsToUnstake.length,
+				gasLimit: 10_000_000 + 10_000_000 * nftsToUnstake.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking NFTs...",
@@ -221,7 +221,7 @@ export const NftStake = ({
 				value: 0,
 				data: "claim_rewards",
 				receiver: scAddress,
-				gasLimit: 5_000_000 + 5_000_000 * stakedNfts.length,
+				gasLimit: 10_000_000 + 7_000_000 * stakedNfts.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Claiming rewards...",

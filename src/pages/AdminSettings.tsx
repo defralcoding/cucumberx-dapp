@@ -45,7 +45,7 @@ export const AdminSettings = () => {
 				data: payload,
 				receiver:
 					"erd1qqqqqqqqqqqqqpgqwcywk6z2mx6apxcyy6ngkxene9844lahdn3qczrxkf",
-				gasLimit: 10_000_000,
+				gasLimit: 100_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Depositing rewards...",

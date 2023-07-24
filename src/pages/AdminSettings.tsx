@@ -26,6 +26,64 @@ import { rewardToken } from "config";
 import { DepositRewards } from "components/Admin/DepositRewards";
 
 export const AdminSettings = () => {
+	const createLockedToken = async () => {
+		await refreshAccount();
+
+		const payload =
+			"newLockedToken@" +
+			string2hex("CUMB-8b7006") +
+			"@" +
+			string2hex("LKCUMB") +
+			"@" +
+			string2hex("LockedCUMB") +
+			"@" +
+			"12";
+
+		const { sessionId } = await sendTransactions({
+			transactions: {
+				value: "500000000000000000",
+				data: payload,
+				receiver:
+					"erd1qqqqqqqqqqqqqpgqwcywk6z2mx6apxcyy6ngkxene9844lahdn3qczrxkf",
+				gasLimit: 10_000_000,
+			},
+			transactionsDisplayInfo: {
+				processingMessage: "Depositing rewards...",
+				errorMessage: "An error has occured during deposit",
+				successMessage: "Rewards deposited successfully",
+			},
+		});
+	};
+
+	const lockTokens = async () => {
+		await refreshAccount();
+
+		const payload =
+			"ESDTTransfer@" +
+			string2hex("CUMB-8b7006") +
+			"@" +
+			"033b2e3c9fd0803ce8000000" +
+			"@" +
+			string2hex("lockTokens") +
+			"@" +
+			"b4";
+
+		const { sessionId } = await sendTransactions({
+			transactions: {
+				value: "0",
+				data: payload,
+				receiver:
+					"erd1qqqqqqqqqqqqqpgqwcywk6z2mx6apxcyy6ngkxene9844lahdn3qczrxkf",
+				gasLimit: 25_000_000,
+			},
+			transactionsDisplayInfo: {
+				processingMessage: "Depositing rewards...",
+				errorMessage: "An error has occured during deposit",
+				successMessage: "Rewards deposited successfully",
+			},
+		});
+	};
+
 	return (
 		<div>
 			<div className="container">
@@ -51,6 +109,19 @@ export const AdminSettings = () => {
 						scAddress="erd1qqqqqqqqqqqqqpgqk4pp8f5742f2w5nrz0zynnmwe0utp2gcdn3qhgh4xr"
 						token={rewardToken}
 					/>
+
+					<button
+						className="btn btn-primary mt-2"
+						onClick={createLockedToken}
+					>
+						1. Crea LKCUMB (0.5 EGLD)
+					</button>
+					<button
+						className="btn btn-primary mt-2"
+						onClick={lockTokens}
+					>
+						2. Blocca token
+					</button>
 				</div>
 			</div>
 		</div>

@@ -4,7 +4,8 @@ import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
 import {
 	TokenPayment,
-	ESDTTransferPayloadBuilder,
+	TransferTransactionsFactory,
+	GasEstimator,
 	Address,
 } from "@multiversx/sdk-core";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";

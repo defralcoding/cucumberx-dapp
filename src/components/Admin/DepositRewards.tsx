@@ -5,7 +5,8 @@ import { string2hex } from "helpers";
 import { InternalToken } from "types";
 import {
 	TokenPayment,
-	ESDTTransferPayloadBuilder,
+	TransferTransactionsFactory,
+	GasEstimator,
 	Address,
 } from "@multiversx/sdk-core";
 
@@ -21,15 +22,18 @@ export const DepositRewards = ({ scAddress, token }: Props) => {
 		await refreshAccount();
 
 		const payload =
-			new ESDTTransferPayloadBuilder()
-				.setPayment(
-					TokenPayment.fungibleFromAmount(
+			new TransferTransactionsFactory(new GasEstimator())
+				.createESDTTransfer({
+					tokenTransfer: TokenPayment.fungibleFromAmount(
 						token.identifier,
 						depositRewards,
 						token.decimals
-					)
-				)
-				.build()
+					),
+					receiver: new Address(scAddress),
+					sender: new Address(""),
+					chainID: "1",
+				})
+				.getData()
 				.toString() +
 			"@" +
 			string2hex("deposit_rewards");

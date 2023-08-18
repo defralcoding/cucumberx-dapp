@@ -7,7 +7,8 @@ import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccoun
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 import {
 	TokenPayment,
-	MultiESDTNFTTransferPayloadBuilder,
+	TransferTransactionsFactory,
+	GasEstimator,
 	Address,
 } from "@multiversx/sdk-core";
 import {
@@ -161,10 +162,14 @@ export const NftStake = ({
 			TokenPayment.nonFungible(nft.collection, nft.nonce)
 		);
 		const payload =
-			new MultiESDTNFTTransferPayloadBuilder()
-				.setPayments(tokenPayments)
-				.setDestination(new Address(scAddress))
-				.build()
+			new TransferTransactionsFactory(new GasEstimator())
+				.createMultiESDTNFTTransfer({
+					tokenTransfers: tokenPayments,
+					destination: new Address(scAddress),
+					sender: new Address(address),
+					chainID: "1",
+				})
+				.getData()
 				.toString() +
 			"@" +
 			string2hex("stake_multiple");

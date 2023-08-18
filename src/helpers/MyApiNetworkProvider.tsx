@@ -1,7 +1,6 @@
 import {
 	Address,
 	SmartContract,
-	SmartContractAbi,
 	AbiRegistry,
 	ResultsParser,
 	VariadicValue,
@@ -97,7 +96,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	): Promise<NftStakingPosition[]> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(AbiRegistry.create(stakingNftAbi)),
+			abi: AbiRegistry.create(stakingNftAbi),
 		});
 
 		const interaction = smartContract.methods.getUserStaking([address]);
@@ -131,7 +130,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	): Promise<TokenStakingPosition> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(AbiRegistry.create(stakingTokenAbi)),
+			abi: AbiRegistry.create(stakingTokenAbi),
 		});
 
 		const interaction = smartContract.methods.getUserStaking([address]);
@@ -161,9 +160,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	): Promise<TokenLockedStakingPosition[]> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(
-				AbiRegistry.create(stakingTokenLockedAbi)
-			),
+			abi: AbiRegistry.create(stakingTokenLockedAbi),
 		});
 
 		const interaction = smartContract.methods.getUserStaking([address]);
@@ -201,7 +198,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	): Promise<BigNumber> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(AbiRegistry.create(stakingNftAbi)),
+			abi: AbiRegistry.create(stakingNftAbi),
 		});
 
 		const interaction = smartContract.methods.calculateRewardsForUser([
@@ -222,7 +219,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	async getContractApr(contractAddress: string): Promise<BigNumber> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(AbiRegistry.create(stakingTokenAbi)),
+			abi: AbiRegistry.create(stakingTokenAbi),
 		});
 
 		const interaction = smartContract.methods.getApr([]);
@@ -241,9 +238,7 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 	async getContractLockingDays(contractAddress: string): Promise<number> {
 		const smartContract = new SmartContract({
 			address: new Address(contractAddress),
-			abi: new SmartContractAbi(
-				AbiRegistry.create(stakingTokenLockedAbi)
-			),
+			abi: AbiRegistry.create(stakingTokenLockedAbi),
 		});
 
 		const interaction = smartContract.methods.getLockDays([]);

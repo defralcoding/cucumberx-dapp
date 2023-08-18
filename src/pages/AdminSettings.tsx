@@ -5,11 +5,7 @@ import { Loader, PageState } from "components";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
-import {
-	TokenPayment,
-	ESDTTransferPayloadBuilder,
-	Address,
-} from "@multiversx/sdk-core";
+import { TokenPayment, Address } from "@multiversx/sdk-core";
 import {
 	useGetAccount,
 	useGetActiveTransactionsStatus,

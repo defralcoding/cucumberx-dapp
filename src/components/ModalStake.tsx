@@ -4,7 +4,8 @@ import { InternalToken } from "types";
 import BigNumber from "bignumber.js";
 import {
 	TokenPayment,
-	ESDTTransferPayloadBuilder,
+	TransferTransactionsFactory,
+	GasEstimator,
 	Address,
 } from "@multiversx/sdk-core";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";
@@ -69,15 +70,18 @@ export function ModalStake({
 
 	const onStake = async () => {
 		const payload =
-			new ESDTTransferPayloadBuilder()
-				.setPayment(
-					TokenPayment.fungibleFromAmount(
+			new TransferTransactionsFactory(new GasEstimator())
+				.createESDTTransfer({
+					tokenTransfer: TokenPayment.fungibleFromAmount(
 						token.identifier,
 						new BigNumber(amount),
 						token.decimals
-					)
-				)
-				.build()
+					),
+					receiver: new Address(scAddress),
+					sender: new Address(address),
+					chainID: "1",
+				})
+				.getData()
 				.toString() +
 			"@" +
 			string2hex("stake");

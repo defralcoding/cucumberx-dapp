@@ -99,7 +99,6 @@ export const TokenLockedStake = ({
 		apiNetworkProvider
 			.getAccountStakedTokensLocked(address, scAddress)
 			.then((_stakedPositions) => {
-				console.log("stakedPosition", _stakedPositions);
 				setStakingPositions(_stakedPositions);
 				setError((prev) => ({
 					...prev,
@@ -119,7 +118,6 @@ export const TokenLockedStake = ({
 		apiNetworkProvider
 			.getAccountRewards(address, scAddress)
 			.then((res) => {
-				console.log("res", res);
 				setRewards(res);
 				setError((prev) => ({ ...prev, rewards: undefined }));
 			})

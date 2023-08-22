@@ -102,7 +102,6 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		apiNetworkProvider
 			.getAccountRewards(address, scAddress)
 			.then((res) => {
-				console.log("res", res);
 				setRewards(res);
 				setError((prev) => ({ ...prev, rewards: undefined }));
 			})

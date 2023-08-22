@@ -26,6 +26,7 @@ import { ModalStake } from "components/ModalStake";
 import { ModalUnstake } from "components/ModalUnstake";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
+import Decimal from "decimal.js";
 
 enum Section {
 	staked = "Staked",
@@ -60,6 +61,9 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		useState<TokenStakingPosition>(defaultTokenStakingPosition);
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
 	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
+
+	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
+	const [rewardsValue, setRewardsValue] = useState<Decimal | undefined>();
 
 	const [modalStakeShow, setModalStakeShow] = useState(false);
 	const [modalUnstakeShow, setModalUnstakeShow] = useState(false);
@@ -127,6 +131,13 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 			});
 	};
 
+	const fetchTokenPrice = async () => {
+		apiNetworkProvider
+			.getTokenPrice(rewardToken.identifier)
+			.then((res) => setTokenPrice(res))
+			.catch((err) => {});
+	};
+
 	const claimRewards = async () => {
 		await refreshAccount();
 
@@ -156,6 +167,7 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		fetchStakedTokens();
 		fetchRewards();
 		fetchApr();
+		fetchTokenPrice();
 
 		const interval = setInterval(function () {
 			fetchRewards();
@@ -164,6 +176,17 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 			clearInterval(interval);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (rewards && tokenPrice) {
+			setRewardsValue(
+				new Decimal(rewards.toString())
+					.div(10 ** rewardToken.decimals)
+					.mul(tokenPrice)
+					.toSignificantDigits(3)
+			);
+		}
+	}, [rewards, tokenPrice]);
 
 	if (isLoading) {
 		return <Loader />;
@@ -200,7 +223,13 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 									useEasing={true}
 									preserveValue={true}
 									prefix="Rewards: "
-									suffix={" " + rewardToken.symbol}
+									suffix={
+										" " +
+										rewardToken.symbol +
+										" ($" +
+										rewardsValue +
+										")"
+									}
 								/>
 							)}
 							<div>

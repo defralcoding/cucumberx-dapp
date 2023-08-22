@@ -1,49 +1,58 @@
 import React, { useEffect, useState } from "react";
-import { NftStake } from "components/NftStake";
-import { TokenStake } from "components/TokenStake";
-import { TokenLockedStake } from "components/TokenLockedStake";
-import { SectionSelector } from "components/SectionSelector";
-import { stakingToken, rewardToken } from "config";
-
-enum Section {
-	nftStake = "Stake NFT",
-	tokenStake = "Stake Token",
-	lockedTokenStake = "Stake Locked Token",
-}
+import { useGetNetworkConfig } from "hooks";
+import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
+import { DashboardLink } from "components/DashboardLink";
+import Decimal from "decimal.js";
+import { rewardToken } from "config";
+import { routeNames } from "routes";
 
 export const Dashboard = () => {
-	const [section, setSection] = useState<Section>(Section.nftStake);
+	const {
+		network: { apiAddress },
+	} = useGetNetworkConfig();
+	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
+
+	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
+
+	useEffect(() => {
+		apiNetworkProvider
+			.getTokenPrice(rewardToken.identifier)
+			.then((price) => {
+				setTokenPrice(price);
+			})
+			.catch((err) => {});
+	}, []);
 
 	return (
 		<div className="container mt-3">
-			<SectionSelector
-				section={section}
-				sections={[...Object.values(Section)]}
-				setSection={setSection}
-				className="w-100"
-			/>
+			<div className="text-center display-3 mb-4">
+				<p>Welcome in the Glory Hole!</p>
+				{tokenPrice !== undefined && (
+					<p>
+						1 $CUMB = $
+						{tokenPrice.toSignificantDigits(4).toString()}
+					</p>
+				)}
+				<p>Your Earned $CUMB: 100</p>
+			</div>
 
-			{section === Section.nftStake && (
-				<NftStake
-					scAddress="erd1qqqqqqqqqqqqqpgqpt97ps7w69ng3ynxpn3lq9fc0wj5u9hddn3qp4lqzu"
-					collectionIdentifier="CUMBX-762eec"
-					rewardToken={rewardToken}
+			<div className="row justify-content-evenly">
+				<DashboardLink
+					title="NFT Staking"
+					description="Insert your NFTs in the Glory Hole and earn $CUMB"
+					route={routeNames.nftStake}
 				/>
-			)}
-			{section === Section.tokenStake && (
-				<TokenStake
-					scAddress="erd1qqqqqqqqqqqqqpgq8rl3293f5cus8u9scmdu796qycjnqgw9dn3qztkevg"
-					stakingToken={stakingToken}
-					rewardToken={rewardToken}
+				<DashboardLink
+					title="Token Staking"
+					description="Want to make a a Cucumber juice? Leave your $CUMB here!"
+					route={routeNames.tokenStake}
 				/>
-			)}
-			{section === Section.lockedTokenStake && (
-				<TokenLockedStake
-					scAddress="erd1qqqqqqqqqqqqqpgqk4pp8f5742f2w5nrz0zynnmwe0utp2gcdn3qhgh4xr"
-					stakingToken={stakingToken}
-					rewardToken={rewardToken}
+				<DashboardLink
+					title="Raffle"
+					description="Use your $CUMB to win exciting prizes!"
+					route={routeNames.tokenStake}
 				/>
-			)}
+			</div>
 		</div>
 	);
 };

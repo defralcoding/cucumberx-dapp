@@ -27,6 +27,7 @@ import { ModalStake } from "components/ModalStake";
 import { ModalUnstake } from "components/ModalUnstake";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
+import Decimal from "decimal.js";
 
 enum Section {
 	staked = "Staked",
@@ -68,6 +69,9 @@ export const TokenLockedStake = ({
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
 	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
 	const [lockingDays, setLockingDays] = useState<number>(0);
+
+	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
+	const [rewardsValue, setRewardsValue] = useState<Decimal | undefined>();
 
 	const [modalStakeShow, setModalStakeShow] = useState(false);
 	const [modalUnstakeShow, setModalUnstakeShow] = useState(false);
@@ -163,6 +167,13 @@ export const TokenLockedStake = ({
 			});
 	};
 
+	const fetchTokenPrice = async () => {
+		apiNetworkProvider
+			.getTokenPrice(rewardToken.identifier)
+			.then((res) => setTokenPrice(res))
+			.catch((err) => {});
+	};
+
 	const claimRewards = async () => {
 		await refreshAccount();
 
@@ -216,6 +227,7 @@ export const TokenLockedStake = ({
 		fetchRewards();
 		fetchApr();
 		fetchLockingDays();
+		fetchTokenPrice();
 
 		const interval = setInterval(function () {
 			fetchRewards();
@@ -224,6 +236,17 @@ export const TokenLockedStake = ({
 			clearInterval(interval);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (rewards && tokenPrice) {
+			setRewardsValue(
+				new Decimal(rewards.toString())
+					.div(10 ** rewardToken.decimals)
+					.mul(tokenPrice)
+					.toSignificantDigits(3)
+			);
+		}
+	}, [rewards, tokenPrice]);
 
 	if (isLoading) {
 		return <Loader />;
@@ -259,7 +282,13 @@ export const TokenLockedStake = ({
 								useEasing={true}
 								preserveValue={true}
 								prefix="Rewards: "
-								suffix={" " + rewardToken.symbol}
+								suffix={
+									" " +
+									rewardToken.symbol +
+									" ($" +
+									rewardsValue +
+									")"
+								}
 							/>
 						)}
 						<div>

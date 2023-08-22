@@ -2,11 +2,14 @@ import { dAppName } from "config";
 import { RouteType } from "types";
 import { withPageTitle } from "./components/PageTitle";
 
-import { Dashboard, Home, AdminSettings } from "./pages";
+import { Dashboard, Home, AdminSettings, TokenStakePage } from "./pages";
+import { NftStake } from "./components/NftStake";
 
 export const routeNames = {
 	home: "/",
 	dashboard: "/dashboard",
+	nftStake: "/stake/nft",
+	tokenStake: "/stake/token",
 	adminSettings: "/admin-settings",
 	unlock: "/unlock",
 };
@@ -25,6 +28,18 @@ export const routes: RouteWithTitleType[] = [
 		path: routeNames.dashboard,
 		title: "Dashboard",
 		component: Dashboard,
+		authenticatedRoute: true,
+	},
+	{
+		path: routeNames.nftStake,
+		title: "Stake NFT",
+		component: NftStake,
+		authenticatedRoute: true,
+	},
+	{
+		path: routeNames.tokenStake,
+		title: "Stake Token",
+		component: TokenStakePage,
 		authenticatedRoute: true,
 	},
 	{

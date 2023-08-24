@@ -11,7 +11,7 @@ export type NonFungibleToken = mx_NonFungibleTokenOfAccountOnNetwork & {
 			url: string;
 			fileType: string;
 			fileSize: number;
-		}
+		},
 	];
 	ticker: string;
 	_checked: boolean;
@@ -48,3 +48,62 @@ export type InternalToken = {
 	decimals: number;
 	decimalsToDisplay: number;
 };
+
+export class Query {
+	__typename?: "Query";
+	cucumberx?: gqlCucumberx;
+}
+
+export class gqlCucumberx {
+	__typename?: "Cucumberx";
+	stakingNft?: gqlStakingNft;
+	stakingToken?: gqlStakingToken;
+	stakingTokenLocked?: gqlStakingTokenLocked;
+	tokenPrice?: number;
+}
+
+export class gqlStakingNft {
+	__typename?: "StakingNft";
+	_address?: string;
+	rewardsForUser?: string;
+	admin?: AddressCustom;
+	stakingToken?: string;
+	rewardToken?: string;
+	rewardsAmount?: string;
+	tokensPerDay?: string;
+	userStaking?: NftStakingPosition[];
+	stakedAddresses?: AddressCustom[];
+}
+
+export class gqlStakingTokenLocked {
+	__typename?: "StakingTokenLocked";
+	_address?: string;
+	rewardsForUser?: string;
+	admin?: AddressCustom;
+	stakingToken?: string;
+	rewardToken?: string;
+	rewardsAmount?: string;
+	apr?: number;
+	lockDays?: number;
+	userStaking?: TokenLockedStakingPosition[];
+	stakedAddresses?: AddressCustom[];
+	lastId?: number;
+}
+
+export class gqlStakingToken {
+	__typename?: "StakingToken";
+	_address?: string;
+	rewardsForUser?: string;
+	admin?: AddressCustom;
+	stakingToken?: string;
+	rewardToken?: string;
+	rewardsAmount?: string;
+	apr?: number;
+	userStaking?: TokenStakingPosition;
+	stakedAddresses?: AddressCustom[];
+}
+
+export class AddressCustom {
+	__typename?: "Address";
+	address?: string;
+}

@@ -22,6 +22,8 @@ import { NftVisualizer } from "components/NftVisualizer";
 import { SectionSelector } from "components/SectionSelector";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
+import Decimal from "decimal.js";
+import { rewardToken } from "config";
 
 enum Section {
 	staked = "Staked",
@@ -41,11 +43,11 @@ type Props = {
 	rewardToken: InternalToken;
 };
 
-export const NftStake = ({
-	scAddress,
-	collectionIdentifier,
-	rewardToken,
-}: Props) => {
+export const NftStake = () => {
+	const scAddress =
+		"erd1qqqqqqqqqqqqqpgqpt97ps7w69ng3ynxpn3lq9fc0wj5u9hddn3qp4lqzu";
+	const collectionIdentifier = "CUMBX-762eec";
+
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -59,6 +61,8 @@ export const NftStake = ({
 	const [walletNfts, setWalletNfts] = useState<NonFungibleToken[]>([]);
 
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
+	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
+	const [rewardsValue, setRewardsValue] = useState<Decimal | undefined>();
 
 	const [transactions, setTransactions] = useState<ServerTransactionType[]>(
 		[]
@@ -151,6 +155,13 @@ export const NftStake = ({
 				const { message } = err as AxiosError;
 				setError((prev) => ({ ...prev, rewards: message }));
 			});
+	};
+
+	const fetchTokenPrice = async () => {
+		apiNetworkProvider
+			.getTokenPrice(rewardToken.identifier)
+			.then((res) => setTokenPrice(res))
+			.catch((err) => {});
 	};
 
 	const stakeNfts = async (stakeAll: boolean = false) => {
@@ -251,6 +262,7 @@ export const NftStake = ({
 		fetchStakedNfts();
 		fetchWalletNfts();
 		fetchRewards();
+		fetchTokenPrice();
 
 		const interval = setInterval(function () {
 			fetchRewards();
@@ -267,6 +279,17 @@ export const NftStake = ({
 			fetchWalletNfts();
 		}
 	}, [section]);
+
+	useEffect(() => {
+		if (rewards && tokenPrice) {
+			setRewardsValue(
+				new Decimal(rewards.toString())
+					.div(10 ** rewardToken.decimals)
+					.mul(tokenPrice)
+					.toSignificantDigits(3)
+			);
+		}
+	}, [rewards, tokenPrice]);
 
 	if (isLoading) {
 		return <Loader />;
@@ -285,7 +308,7 @@ export const NftStake = ({
 	}
 
 	return (
-		<div className="bg-secondary p-4 mt-4">
+		<div className="container bg-secondary p-4 mt-4">
 			<div className="text-center display-3 mb-4">
 				{error.rewards && !rewards && (
 					<PageState title="Sorry, we can't calculate your rewards. Please try again later." />
@@ -300,7 +323,13 @@ export const NftStake = ({
 						useEasing={true}
 						preserveValue={true}
 						prefix="Rewards: "
-						suffix={" " + rewardToken.symbol}
+						suffix={
+							" " +
+							rewardToken.symbol +
+							" ($" +
+							rewardsValue +
+							")"
+						}
 					/>
 				)}
 				<div>

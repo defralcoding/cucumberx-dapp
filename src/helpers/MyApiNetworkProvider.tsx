@@ -8,6 +8,7 @@ import {
 	Struct,
 } from "@multiversx/sdk-core";
 import BigNumber from "bignumber.js";
+import Decimal from "decimal.js";
 import { ApiNetworkProvider } from "@multiversx/sdk-network-providers";
 import {
 	NonFungibleToken,
@@ -252,6 +253,11 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 			return (firstValue as NumericalValue).value.toNumber();
 		}
 		return 0;
+	}
+
+	async getTokenPrice(id: string): Promise<Decimal> {
+		const response = await this.doGetGeneric(`mex/tokens/${id}`);
+		return new Decimal(String(response.price));
 	}
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { request } from "graphql-request";
 import { faBan, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { AxiosError } from "axios";
 import { Loader, PageState } from "components";
@@ -21,9 +22,10 @@ import CountUp from "react-countup";
 import { NftVisualizer } from "components/NftVisualizer";
 import { SectionSelector } from "components/SectionSelector";
 import { string2hex } from "helpers";
+import { Query, gqlCucumberx, NftStakingPosition } from "types";
 import BigNumber from "bignumber.js";
 import Decimal from "decimal.js";
-import { rewardToken } from "config";
+import { rewardToken, graphqlUrl } from "config";
 
 enum Section {
 	staked = "Staked",
@@ -58,6 +60,7 @@ export const NftStake = () => {
 
 	const [section, setSection] = useState<Section>(Section.staked);
 	const [stakedNfts, setStakedNfts] = useState<NonFungibleToken[]>([]);
+	const [userStaking, setUserStaking] = useState<NftStakingPosition[]>([]);
 	const [walletNfts, setWalletNfts] = useState<NonFungibleToken[]>([]);
 
 	const [rewards, setRewards] = useState<BigNumber | undefined>();
@@ -86,51 +89,6 @@ export const NftStake = () => {
 		setWalletNfts(_walletNfts);
 	};
 
-	const fetchStakedNfts = async () => {
-		apiNetworkProvider
-			.getAccountStakedNfts(address, scAddress)
-			.then((_stakedPositions) => {
-				if (_stakedPositions.length === 0) {
-					setStakedNfts([]);
-					return;
-				}
-				const stakedNonces = _stakedPositions
-					.map((sp) => sp.nonce.toString(16))
-					.map((nonce) =>
-						nonce.length % 2 === 1 ? "0" + nonce : nonce
-					);
-
-				apiNetworkProvider
-					.getNftsFromCollection(collectionIdentifier, stakedNonces)
-					.then((_stakedNfts) => {
-						_stakedNfts.forEach((nft) => {
-							const stakedPosition = _stakedPositions.find(
-								(sp) => sp.nonce === nft.nonce
-							);
-							if (stakedPosition) {
-								nft._stakingPosition = stakedPosition;
-							}
-						});
-						setStakedNfts(_stakedNfts);
-						setError((prev) => ({
-							...prev,
-							staked: undefined,
-						}));
-					})
-					.catch((err) => {
-						const { message } = err as AxiosError;
-						setError((prev) => ({ ...prev, staked: message }));
-					});
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, staked: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
 	const fetchWalletNfts = () => {
 		apiNetworkProvider
 			.getAccountNftsFromCollection(address, collectionIdentifier)
@@ -144,24 +102,53 @@ export const NftStake = () => {
 			});
 	};
 
-	const fetchRewards = async () => {
-		apiNetworkProvider
-			.getAccountRewards(address, scAddress)
-			.then((res) => {
-				setRewards(res);
-				setError((prev) => ({ ...prev, rewards: undefined }));
+	const fetchData = async () => {
+		request<Query>(
+			graphqlUrl,
+			`
+            query($user: String) {
+                cucumberx {
+                    tokenPrice
+                    stakingNft {
+                        _address
+                        rewardToken
+                        tokensPerDay
+                        rewardsForUser(address: $user)
+                        userStaking(user: $user) {
+                            nonce
+                        }
+                    }
+                }
+            }              
+            `,
+			{
+				user: address,
+			}
+		)
+			.then(({ cucumberx }) => {
+				if (!cucumberx) return;
+				const { stakingNft, tokenPrice } = cucumberx;
+				if (!stakingNft) return;
+
+				setRewards(new BigNumber(stakingNft.rewardsForUser!));
+
+				if (stakingNft.userStaking!.length === 0) {
+					setStakedNfts([]);
+				} else {
+					const userStaking = stakingNft.userStaking!;
+					setUserStaking(userStaking);
+					setError((prev) => ({ ...prev, generic: undefined }));
+				}
+
+				if (!tokenPrice) return;
+				setTokenPrice(new Decimal(tokenPrice));
 			})
 			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, rewards: message }));
+				setError((prev) => ({ ...prev, generic: err.message }));
+			})
+			.finally(() => {
+				setIsLoading(false);
 			});
-	};
-
-	const fetchTokenPrice = async () => {
-		apiNetworkProvider
-			.getTokenPrice(rewardToken.identifier)
-			.then((res) => setTokenPrice(res))
-			.catch((err) => {});
 	};
 
 	const stakeNfts = async (stakeAll: boolean = false) => {
@@ -252,20 +239,17 @@ export const NftStake = () => {
 
 	useEffect(() => {
 		if (success || fail) {
-			fetchStakedNfts();
+			fetchData();
 			fetchWalletNfts();
-			fetchRewards();
 		}
 	}, [success, fail]);
 
 	useEffect(() => {
-		fetchStakedNfts();
+		fetchData();
 		fetchWalletNfts();
-		fetchRewards();
-		fetchTokenPrice();
 
 		const interval = setInterval(function () {
-			fetchRewards();
+			fetchData();
 		}, 6000);
 		return () => {
 			clearInterval(interval);
@@ -274,7 +258,7 @@ export const NftStake = () => {
 
 	useEffect(() => {
 		if (section === Section.staked) {
-			fetchStakedNfts();
+			fetchData();
 		} else {
 			fetchWalletNfts();
 		}
@@ -290,6 +274,37 @@ export const NftStake = () => {
 			);
 		}
 	}, [rewards, tokenPrice]);
+
+	useEffect(() => {
+		console.log(userStaking.length, stakedNfts.length);
+		if (userStaking.length == stakedNfts.length) return;
+
+		const stakedNonces = userStaking
+			.map((sp) => sp.nonce.toString(16))
+			.map((nonce) => (nonce.length % 2 === 1 ? "0" + nonce : nonce));
+
+		apiNetworkProvider
+			.getNftsFromCollection(collectionIdentifier, stakedNonces)
+			.then((_stakedNfts) => {
+				_stakedNfts.forEach((nft) => {
+					const stakedPosition = userStaking.find(
+						(sp) => sp.nonce === nft.nonce
+					);
+					if (stakedPosition) {
+						nft._stakingPosition = stakedPosition;
+					}
+				});
+				setStakedNfts(_stakedNfts);
+				setError((prev) => ({
+					...prev,
+					staked: undefined,
+				}));
+			})
+			.catch((err) => {
+				const { message } = err as AxiosError;
+				setError((prev) => ({ ...prev, staked: message }));
+			});
+	}, [userStaking]);
 
 	if (isLoading) {
 		return <Loader />;

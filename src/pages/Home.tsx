@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { request } from "graphql-request";
 import { Link } from "react-router-dom";
 import { AuthRedirectWrapper } from "components";
-import { dAppName } from "config";
+import { dAppName, graphqlUrl } from "config";
 import { routeNames } from "routes";
 import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 import { useGetNetworkConfig } from "hooks";
+import { Query, gqlCucumberx } from "types";
 import CountUp from "react-countup";
 
 const HomePage = () => {
@@ -16,14 +18,27 @@ const HomePage = () => {
 	const [stakedCount, setStakedCount] = useState(0);
 
 	useEffect(() => {
-		apiNetworkProvider
-			.getAccountNftsCountFromCollection(
-				"erd1qqqqqqqqqqqqqpgqpt97ps7w69ng3ynxpn3lq9fc0wj5u9hddn3qp4lqzu",
-				"CUMBX-762eec"
-			)
-			.then((count) => {
-				setStakedCount(count);
-			});
+		request<Query>(
+			graphqlUrl,
+			`
+            query {
+                cucumberx {
+                    tokenPrice
+                    stakingNft {
+                        nStakedNfts
+                    }
+                }
+            }
+            `
+		).then(({ cucumberx }) => {
+			if (!cucumberx) return;
+
+			const { stakingNft } = cucumberx;
+
+			if (stakingNft?.nStakedNfts) {
+				setStakedCount(stakingNft.nStakedNfts);
+			}
+		});
 	}, []);
 
 	return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { request } from "graphql-request";
-import { useGetNetworkConfig } from "hooks";
+import { useGetNetworkConfig, useGetAccount } from "hooks";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";
 import { DashboardLink } from "components/DashboardLink";
 import Decimal from "decimal.js";
@@ -10,6 +10,8 @@ import { routeNames } from "routes";
 import { BigNumber } from "bignumber.js";
 
 export const Dashboard = () => {
+	const { address } = useGetAccount();
+
 	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
 	const [earningPerDay, setEarningPerDay] = useState<BigNumber | undefined>();
 
@@ -23,8 +25,6 @@ export const Dashboard = () => {
                     stakingNft {
                         tokensPerDay
                         userStaking(user: $user) {
-                            staked_epoch
-                            last_claimed_timestamp
                             nonce
                         }
                     }
@@ -44,7 +44,7 @@ export const Dashboard = () => {
             }
             `,
 			{
-				user: "erd1e9nnlhee5rvn9k8y3ysmtsx490h8nw9jels5vjdlezl72yrtg3yq6vvj3r",
+				user: address,
 			}
 		).then(({ cucumberx }) => {
 			if (!cucumberx) return;

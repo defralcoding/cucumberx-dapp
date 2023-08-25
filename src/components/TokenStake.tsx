@@ -18,6 +18,7 @@ import {
 	TokenStakingPosition,
 	defaultTokenStakingPosition,
 	InternalToken,
+	gqlStakingToken,
 } from "types";
 import CountUp from "react-countup";
 import { NftVisualizer } from "components/NftVisualizer";
@@ -41,12 +42,22 @@ type errorsType = {
 };
 
 type Props = {
-	scAddress: string;
+	data: gqlStakingToken | undefined;
+	tokenPrice: Decimal | undefined;
 	stakingToken: InternalToken;
 	rewardToken: InternalToken;
 };
 
-export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
+export const TokenStake = ({
+	data,
+	tokenPrice,
+	stakingToken,
+	rewardToken,
+}: Props) => {
+	if (!data) {
+		return <Loader />;
+	}
+
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -55,15 +66,32 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 	const { address } = useGetAccount();
 	const { success, fail } = useGetActiveTransactionsStatus();
 
+	const {
+		_address: scAddress,
+		rewardsForUser,
+		apr,
+		userStaking: stakingPosition,
+	} = data;
+
+	if (!scAddress || !apr || !stakingPosition || !rewardsForUser) {
+		return (
+			<div className="my-5">
+				<PageState
+					icon={faBan}
+					className="text-muted"
+					title="Error fetching Data"
+				/>
+			</div>
+		);
+	}
+
+	const rewards = new BigNumber(rewardsForUser);
+	const rewardsValue = new Decimal(rewards.toString())
+		.div(10 ** rewardToken.decimals)
+		.mul(tokenPrice || new Decimal(0))
+		.toSignificantDigits(3);
+
 	const [section, setSection] = useState<Section>(Section.staked);
-
-	const [stakingPosition, setStakingPosition] =
-		useState<TokenStakingPosition>(defaultTokenStakingPosition);
-	const [rewards, setRewards] = useState<BigNumber | undefined>();
-	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
-
-	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
-	const [rewardsValue, setRewardsValue] = useState<Decimal | undefined>();
 
 	const [modalStakeShow, setModalStakeShow] = useState(false);
 	const [modalUnstakeShow, setModalUnstakeShow] = useState(false);
@@ -78,64 +106,6 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		apr: undefined,
 		generic: undefined,
 	});
-
-	const fetchStakedTokens = async () => {
-		apiNetworkProvider
-			.getAccountStakedTokens(address, scAddress)
-			.then((_stakedPosition) => {
-				setStakingPosition(_stakedPosition);
-				setError((prev) => ({
-					...prev,
-					staked: undefined,
-				}));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, staked: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const fetchRewards = async () => {
-		apiNetworkProvider
-			.getAccountRewards(address, scAddress)
-			.then((res) => {
-				setRewards(res);
-				setError((prev) => ({ ...prev, rewards: undefined }));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, rewards: message }));
-			});
-	};
-
-	const fetchApr = async () => {
-		apiNetworkProvider
-			.getContractApr(scAddress)
-			.then((_apr) => {
-				setApr(_apr);
-				setError((prev) => ({
-					...prev,
-					apr: undefined,
-				}));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, apr: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const fetchTokenPrice = async () => {
-		apiNetworkProvider
-			.getTokenPrice(rewardToken.identifier)
-			.then((res) => setTokenPrice(res))
-			.catch((err) => {});
-	};
 
 	const claimRewards = async () => {
 		await refreshAccount();
@@ -154,29 +124,9 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 			},
 		});
 	};
-
+	/*
 	useEffect(() => {
-		if (success || fail) {
-			fetchStakedTokens();
-			fetchRewards();
-		}
-	}, [success, fail]);
-
-	useEffect(() => {
-		fetchStakedTokens();
-		fetchRewards();
-		fetchApr();
-		fetchTokenPrice();
-
-		const interval = setInterval(function () {
-			fetchRewards();
-		}, 6000);
-		return () => {
-			clearInterval(interval);
-		};
-	}, []);
-
-	useEffect(() => {
+		console.log("useEffect");
 		if (rewards && tokenPrice) {
 			setRewardsValue(
 				new Decimal(rewards.toString())
@@ -186,7 +136,7 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 			);
 		}
 	}, [rewards, tokenPrice]);
-
+*/
 	if (isLoading) {
 		return <Loader />;
 	}
@@ -207,7 +157,7 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 		<>
 			<div className="bg-secondary p-4 mt-4">
 				<div className="text-center display-3 mb-4">
-					{!stakingPosition.staked_amount.isZero() || true ? (
+					{!new BigNumber(stakingPosition.staked_amount).isZero() ? (
 						<>
 							{error.rewards && !rewards && (
 								<PageState title="Sorry, we can't calculate your rewards. Please try again later." />
@@ -279,7 +229,9 @@ export const TokenStake = ({ scAddress, stakingToken, rewardToken }: Props) => {
 						<button
 							className="btn btn-lg btn-primary"
 							onClick={() => setModalUnstakeShow(true)}
-							disabled={stakingPosition.staked_amount.isZero()}
+							disabled={new BigNumber(
+								stakingPosition.staked_amount
+							).isZero()}
 						>
 							Unstake
 						</button>

@@ -8,7 +8,7 @@ export const DashboardLink = ({
 }: {
 	title: string;
 	description: string;
-	route: string;
+	route?: string;
 }) => {
 	return (
 		<div className="col-md card card-dashboard text-center">
@@ -16,12 +16,21 @@ export const DashboardLink = ({
 
 			<h4 className="mb-4">{description}</h4>
 
-			<Link
-				to={route}
-				className={"btn btn-primary btn-lg w-75 mb-3 mx-auto"}
-			>
-				Enter
-			</Link>
+			{route !== undefined ? (
+				<Link
+					to={route}
+					className={"btn btn-primary btn-lg w-75 mb-3 mx-auto"}
+				>
+					Enter
+				</Link>
+			) : (
+				<button
+					className={"btn btn-primary btn-lg w-75 mb-3 mx-auto"}
+					disabled
+				>
+					Coming soon...
+				</button>
+			)}
 		</div>
 	);
 };

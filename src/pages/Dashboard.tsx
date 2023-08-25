@@ -126,7 +126,6 @@ export const Dashboard = () => {
 				<DashboardLink
 					title="Raffle"
 					description="Use your $CUMB to win exciting prizes!"
-					route={routeNames.tokenStake}
 				/>
 			</div>
 		</div>

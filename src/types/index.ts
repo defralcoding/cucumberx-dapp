@@ -73,6 +73,7 @@ export class gqlStakingNft {
 	tokensPerDay?: string;
 	userStaking?: NftStakingPosition[];
 	stakedAddresses?: AddressCustom[];
+	nStakedNfts?: number;
 }
 
 export class gqlStakingTokenLocked {

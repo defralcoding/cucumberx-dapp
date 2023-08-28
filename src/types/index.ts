@@ -59,6 +59,7 @@ export class gqlCucumberx {
 	stakingNft?: gqlStakingNft;
 	stakingToken?: gqlStakingToken;
 	stakingTokenLocked?: gqlStakingTokenLocked;
+	lottery?: gqlLottery;
 	tokenPrice?: number;
 }
 
@@ -102,6 +103,26 @@ export class gqlStakingToken {
 	apr?: number;
 	userStaking?: TokenStakingPosition;
 	stakedAddresses?: AddressCustom[];
+}
+
+export class gqlLottery {
+	__typename?: "Lottery";
+	_address?: string;
+	admin?: AddressCustom;
+	ticketToken?: string;
+	ticketPrice?: BigNumber;
+	prizeAmount?: BigNumber;
+	prizeToken?: string;
+	userTickets?: number[];
+	ticketUser?: AddressCustom;
+	winner?: AddressCustom;
+	winnerTicket?: number;
+	participants?: AddressCustom[];
+	lastTicketId?: number;
+	deadline?: number;
+	amountSpentInTickets?: BigNumber;
+	percentBurn?: number;
+	ticketsTokenWallet?: AddressCustom;
 }
 
 export class AddressCustom {

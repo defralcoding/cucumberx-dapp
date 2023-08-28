@@ -90,10 +90,10 @@ export const Dashboard = () => {
 
 	return (
 		<div className="container mt-3">
-			<div className="text-center display-3 mb-4">
-				<p>Welcome in the Glory Hole!</p>
+			<div className="text-center mb-4">
+				<h1>Welcome in the Glory Hole!</h1>
 				{earningPerDay !== undefined && (
-					<p>
+					<h3>
 						You earn&nbsp;
 						<FormatAmount
 							value={earningPerDay.toString(10)}
@@ -102,13 +102,13 @@ export const Dashboard = () => {
 							decimals={rewardToken.decimals}
 						/>
 						&nbsp;per day
-					</p>
+					</h3>
 				)}
 				{tokenPrice !== undefined && (
-					<p>
+					<h3>
 						1 $CUMB = $
 						{tokenPrice.toSignificantDigits(4).toString()}
-					</p>
+					</h3>
 				)}
 			</div>
 

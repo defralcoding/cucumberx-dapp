@@ -19,6 +19,7 @@ import {
 	TokenLockedStakingPosition,
 	defaultTokenStakingPosition,
 	InternalToken,
+	gqlStakingTokenLocked,
 } from "types";
 import CountUp from "react-countup";
 import { NftVisualizer } from "components/NftVisualizer";
@@ -27,6 +28,7 @@ import { ModalStake } from "components/ModalStake";
 import { ModalUnstake } from "components/ModalUnstake";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
+import Decimal from "decimal.js";
 
 enum Section {
 	staked = "Staked",
@@ -42,16 +44,22 @@ type errorsType = {
 };
 
 type Props = {
-	scAddress: string;
+	data: gqlStakingTokenLocked | undefined;
+	tokenPrice: Decimal | undefined;
 	stakingToken: InternalToken;
 	rewardToken: InternalToken;
 };
 
 export const TokenLockedStake = ({
-	scAddress,
+	data,
+	tokenPrice,
 	stakingToken,
 	rewardToken,
 }: Props) => {
+	if (!data) {
+		return <Loader />;
+	}
+
 	const {
 		network: { apiAddress },
 	} = useGetNetworkConfig();
@@ -62,12 +70,37 @@ export const TokenLockedStake = ({
 
 	const [section, setSection] = useState<Section>(Section.staked);
 
-	const [stakingPositions, setStakingPositions] = useState<
-		TokenLockedStakingPosition[]
-	>([]);
-	const [rewards, setRewards] = useState<BigNumber | undefined>();
-	const [apr, setApr] = useState<BigNumber>(new BigNumber(0));
-	const [lockingDays, setLockingDays] = useState<number>(0);
+	const {
+		_address: scAddress,
+		rewardsForUser,
+		apr,
+		lockDays: lockingDays,
+		userStaking: stakingPositions,
+	} = data;
+
+	if (
+		!scAddress ||
+		!apr ||
+		stakingPositions === undefined ||
+		!lockingDays ||
+		rewardsForUser === undefined
+	) {
+		return (
+			<div className="my-5">
+				<PageState
+					icon={faBan}
+					className="text-muted"
+					title="Error fetching Data"
+				/>
+			</div>
+		);
+	}
+
+	const rewards = new BigNumber(rewardsForUser);
+	const rewardsValue = new Decimal(rewards.toString())
+		.div(10 ** rewardToken.decimals)
+		.mul(tokenPrice || new Decimal(0))
+		.toSignificantDigits(3);
 
 	const [modalStakeShow, setModalStakeShow] = useState(false);
 	const [modalUnstakeShow, setModalUnstakeShow] = useState(false);
@@ -90,78 +123,6 @@ export const TokenLockedStake = ({
 			new BigNumber(0)
 		);
 	}, [stakingPositions]);
-
-	const fetchStakedTokens = async () => {
-		apiNetworkProvider
-			.getAccountStakedTokensLocked(address, scAddress)
-			.then((_stakedPositions) => {
-				console.log("stakedPosition", _stakedPositions);
-				setStakingPositions(_stakedPositions);
-				setError((prev) => ({
-					...prev,
-					staked: undefined,
-				}));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, staked: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const fetchRewards = async () => {
-		apiNetworkProvider
-			.getAccountRewards(address, scAddress)
-			.then((res) => {
-				console.log("res", res);
-				setRewards(res);
-				setError((prev) => ({ ...prev, rewards: undefined }));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, rewards: message }));
-			});
-	};
-
-	const fetchApr = async () => {
-		apiNetworkProvider
-			.getContractApr(scAddress)
-			.then((_apr) => {
-				setApr(_apr);
-				setError((prev) => ({
-					...prev,
-					apr: undefined,
-				}));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, apr: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
-
-	const fetchLockingDays = async () => {
-		apiNetworkProvider
-			.getContractLockingDays(scAddress)
-			.then((_lockingDays) => {
-				setLockingDays(_lockingDays);
-				setError((prev) => ({
-					...prev,
-					lockingDays: undefined,
-				}));
-			})
-			.catch((err) => {
-				const { message } = err as AxiosError;
-				setError((prev) => ({ ...prev, lockingDays: message }));
-			})
-			.finally(() => {
-				setIsLoading(false);
-			});
-	};
 
 	const claimRewards = async () => {
 		await refreshAccount();
@@ -204,27 +165,6 @@ export const TokenLockedStake = ({
 		});
 	};
 
-	useEffect(() => {
-		if (success || fail) {
-			fetchStakedTokens();
-			fetchRewards();
-		}
-	}, [success, fail]);
-
-	useEffect(() => {
-		fetchStakedTokens();
-		fetchRewards();
-		fetchApr();
-		fetchLockingDays();
-
-		const interval = setInterval(function () {
-			fetchRewards();
-		}, 6000);
-		return () => {
-			clearInterval(interval);
-		};
-	}, []);
-
 	if (isLoading) {
 		return <Loader />;
 	}
@@ -259,7 +199,13 @@ export const TokenLockedStake = ({
 								useEasing={true}
 								preserveValue={true}
 								prefix="Rewards: "
-								suffix={" " + rewardToken.symbol}
+								suffix={
+									" " +
+									rewardToken.symbol +
+									" ($" +
+									rewardsValue +
+									")"
+								}
 							/>
 						)}
 						<div>

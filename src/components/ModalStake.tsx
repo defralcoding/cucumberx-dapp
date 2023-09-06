@@ -173,7 +173,7 @@ export function ModalStake({
 						</p>
 					</div>
 
-					{alreadyStaked.isGreaterThan(0) &&
+					{new BigNumber(alreadyStaked).isGreaterThan(0) &&
 						lockingDays === undefined && (
 							<p>
 								By staking, your pending rewards will be

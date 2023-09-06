@@ -124,19 +124,7 @@ export const TokenStake = ({
 			},
 		});
 	};
-	/*
-	useEffect(() => {
-		console.log("useEffect");
-		if (rewards && tokenPrice) {
-			setRewardsValue(
-				new Decimal(rewards.toString())
-					.div(10 ** rewardToken.decimals)
-					.mul(tokenPrice)
-					.toSignificantDigits(3)
-			);
-		}
-	}, [rewards, tokenPrice]);
-*/
+
 	if (isLoading) {
 		return <Loader />;
 	}

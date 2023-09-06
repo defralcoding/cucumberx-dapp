@@ -14,6 +14,8 @@ export const Dashboard = () => {
 
 	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
 	const [earningPerDay, setEarningPerDay] = useState<BigNumber | undefined>();
+	const [nStakedNfts, setNStakedNfts] = useState<BigNumber | undefined>();
+	const [stakedTokens, setStakedTokens] = useState<BigNumber | undefined>();
 
 	useEffect(() => {
 		request<Query>(
@@ -56,34 +58,38 @@ export const Dashboard = () => {
 				setTokenPrice(new Decimal(tokenPrice));
 			}
 			if (stakingNft && stakingToken && stakingTokenLocked) {
+				const nStakedNfts = stakingNft.userStaking!.length;
+				const stakedAmount = stakingToken.userStaking!.staked_amount;
+				const stakedLockedAmount =
+					stakingTokenLocked.userStaking!.reduce(
+						(acc, { staked_amount }) => acc.plus(staked_amount),
+						new BigNumber(0)
+					);
+
 				const _earningPerDay = new BigNumber(0)
 					.plus(
 						new BigNumber(stakingNft.tokensPerDay!).multipliedBy(
-							stakingNft.userStaking!.length
+							nStakedNfts
 						)
 					)
 					.plus(
 						new BigNumber(stakingToken.apr!)
-							.multipliedBy(
-								stakingToken.userStaking!.staked_amount
-							)
+							.multipliedBy(stakedAmount)
 							.dividedBy(100)
 							.dividedBy(365)
 					)
 					.plus(
 						new BigNumber(stakingTokenLocked.apr!)
-							.multipliedBy(
-								stakingTokenLocked.userStaking!.reduce(
-									(acc, { staked_amount }) =>
-										acc.plus(staked_amount),
-									new BigNumber(0)
-								)
-							)
+							.multipliedBy(stakedLockedAmount)
 							.dividedBy(100)
 							.dividedBy(365)
 					);
 
 				setEarningPerDay(_earningPerDay.decimalPlaces(0));
+				setNStakedNfts(new BigNumber(nStakedNfts));
+				setStakedTokens(
+					new BigNumber(stakedAmount).plus(stakedLockedAmount)
+				);
 			}
 		});
 	}, []);
@@ -104,6 +110,21 @@ export const Dashboard = () => {
 						&nbsp;per day
 					</h3>
 				)}
+				{nStakedNfts !== undefined && nStakedNfts.gt(0) && (
+					<h3>NFTs staked: {nStakedNfts.toString(10)}</h3>
+				)}
+				{stakedTokens !== undefined && stakedTokens.gt(0) && (
+					<h3>
+						{rewardToken.symbol} staked:&nbsp;
+						<FormatAmount
+							value={stakedTokens.toString(10)}
+							token={""}
+							digits={2}
+							decimals={rewardToken.decimals}
+						/>
+					</h3>
+				)}
+
 				{tokenPrice !== undefined && (
 					<h3>
 						1 $CUMB = $

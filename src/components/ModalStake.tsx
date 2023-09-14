@@ -117,7 +117,6 @@ export function ModalStake({
 		fetchBalance();
 	}, []);
 
-	//TODO fix close button
 	return (
 		<>
 			<Modal show={show} onHide={handleClose}>

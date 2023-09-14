@@ -61,6 +61,10 @@ export function ModalDashboard({ show, setShow }: ModalDashboardProps) {
 		string | undefined
 	>();
 
+	const minimumRewardsToClaim = new BigNumber(10).multipliedBy(
+		10 ** token.decimals
+	);
+
 	const fetchData = () => {
 		request<Query>(
 			graphqlUrl,
@@ -285,12 +289,14 @@ export function ModalDashboard({ show, setShow }: ModalDashboardProps) {
 						className="btn btn-lg btn-primary mt-3 w-100"
 						onClick={() => claimRewards()}
 						disabled={
-							!rewards ||
-							rewards.isZero() ||
-							rewards.isLessThan(
-								new BigNumber(10).multipliedBy(
-									10 ** token.decimals
-								)
+							!(
+								rewards &&
+								rewards.gt(minimumRewardsToClaim) &&
+								(nftRewards?.gt(minimumRewardsToClaim) ||
+									tokenRewards?.gt(minimumRewardsToClaim) ||
+									tokenLockedRewards?.gt(
+										minimumRewardsToClaim
+									))
 							)
 						}
 					>

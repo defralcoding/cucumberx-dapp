@@ -92,7 +92,6 @@ export function ModalUnstake({
 		handleClose();
 	};
 
-	//TODO fix close button
 	return (
 		<>
 			<Modal show={show} onHide={handleClose}>

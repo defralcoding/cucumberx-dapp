@@ -62,7 +62,7 @@ export const Navbar = () => {
 										navbarExpand +
 										"-0 mr-0 mr-" +
 										navbarExpand +
-										"-2"
+										"-2 d-block"
 									}
 									target="_blank"
 								>
@@ -77,7 +77,7 @@ export const Navbar = () => {
 										navbarExpand +
 										"-0 mr-0 mr-" +
 										navbarExpand +
-										"-2"
+										"-2 d-block"
 									}
 									target="_blank"
 								>
@@ -92,7 +92,7 @@ export const Navbar = () => {
 										navbarExpand +
 										"-0 mr-0 mr-" +
 										navbarExpand +
-										"-2"
+										"-2 d-block"
 									}
 									target="_blank"
 								>
@@ -107,7 +107,7 @@ export const Navbar = () => {
 										navbarExpand +
 										"-0 mr-0 mr-" +
 										navbarExpand +
-										"-2"
+										"-2 d-block"
 									}
 									target="_blank"
 								>
@@ -125,37 +125,35 @@ export const Navbar = () => {
 													navbarExpand +
 													"-0 mr-0 mr-" +
 													navbarExpand +
-													"-2"
+													"-2 d-block"
 												}
 											>
 												Admin Settings
 											</Link>
 										</NavItem>
 									)}
-									<NavItem>
-										<button
-											className="btn btn-primary"
-											onClick={() =>
-												setShowModalAccount(true)
-											}
-										>
-											<FontAwesomeIcon
-												icon={faUser}
-												className="mr-2"
-											/>
-
-											{username
-												? username.replace(
-														".elrond",
-														""
-												  )
-												: shortenAddress(address)}
-										</button>
-									</NavItem>
 								</>
 							)}
 						</Nav>
 					</BsNavbar.Collapse>
+
+					<div className="flex-grow-1-md">
+						<NavItem>
+							<button
+								className="btn btn-primary d-block w-100"
+								onClick={() => setShowModalAccount(true)}
+							>
+								<FontAwesomeIcon
+									icon={faUser}
+									className={"mr-2"}
+								/>
+
+								{username
+									? username.replace(".elrond", "")
+									: shortenAddress(address)}
+							</button>
+						</NavItem>
+					</div>
 				</div>
 			</BsNavbar>
 			<ModalDashboard

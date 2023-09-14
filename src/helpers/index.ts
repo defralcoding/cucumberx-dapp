@@ -7,3 +7,6 @@ export const string2hex = (tmp: string): string => {
 	}
 	return str;
 };
+
+export const shortenAddress = (address: string): string =>
+	address.slice(0, 6) + "..." + address.slice(-4);

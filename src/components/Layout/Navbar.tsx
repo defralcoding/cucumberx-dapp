@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	faChartSimple,
 	faFileSignature,
+	faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import Modal from "react-bootstrap/Modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Navbar as BsNavbar, NavItem, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { dAppName, adminAddresses } from "config";
-import { logout } from "helpers";
+import { logout, shortenAddress } from "helpers";
 import { useGetIsLoggedIn, useGetAccount } from "hooks";
 import { routeNames } from "routes";
+import { ModalDashboard } from "components/ModalDashboard";
 import CucumberXLogo from "../../assets/img/logo.png";
 
 export const Navbar = () => {
 	const isLoggedIn = useGetIsLoggedIn();
-	const { address } = useGetAccount();
+	const { address, username } = useGetAccount();
+
+	const [showModalAccount, setShowModalAccount] = useState(false);
 
 	const navbarExpand = "md";
 
@@ -23,113 +28,140 @@ export const Navbar = () => {
 	};
 
 	return (
-		<BsNavbar expand={navbarExpand} className="px-4 py-3">
-			<div className="container-fluid">
-				<BsNavbar.Brand>
-					<Link
-						className="d-flex align-items-center navbar-brand mr-0"
-						to={isLoggedIn ? routeNames.dashboard : routeNames.home}
-					>
-						<img src={CucumberXLogo} className="cucumberx-logo" />
-						<span className="dapp-name text-muted">{dAppName}</span>
-					</Link>
-				</BsNavbar.Brand>
+		<>
+			<BsNavbar expand={navbarExpand} className="px-4 py-3">
+				<div className="container-fluid">
+					<BsNavbar.Brand>
+						<Link
+							className="d-flex align-items-center navbar-brand mr-0"
+							to={
+								isLoggedIn
+									? routeNames.dashboard
+									: routeNames.home
+							}
+						>
+							<img
+								src={CucumberXLogo}
+								className="cucumberx-logo"
+							/>
+							<span className="dapp-name text-muted">
+								{dAppName}
+							</span>
+						</Link>
+					</BsNavbar.Brand>
 
-				<BsNavbar.Toggle aria-controls="responsive-navbar-nav" />
+					<BsNavbar.Toggle aria-controls="responsive-navbar-nav" />
 
-				<BsNavbar.Collapse id="responsive-navbar-nav">
-					<Nav className="ml-auto">
-						<NavItem>
-							<a
-								href="https://xoxno.com/buy/VegetablArt/cucumberx"
-								className={
-									"btn btn-primary mb-2 mb-" +
-									navbarExpand +
-									"-0 mr-0 mr-" +
-									navbarExpand +
-									"-2"
-								}
-								target="_blank"
-							>
-								Buy Cucumber
-							</a>
-						</NavItem>
-						<NavItem>
-							<a
-								href="https://docs.cucumberx.com"
-								className={
-									"btn btn-primary mb-2 mb-" +
-									navbarExpand +
-									"-0 mr-0 mr-" +
-									navbarExpand +
-									"-2"
-								}
-								target="_blank"
-							>
-								Whitepaper
-							</a>
-						</NavItem>
-						<NavItem>
-							<a
-								href="https://cucumberx.com/free-cucumberx-really/"
-								className={
-									"btn btn-primary mb-2 mb-" +
-									navbarExpand +
-									"-0 mr-0 mr-" +
-									navbarExpand +
-									"-2"
-								}
-								target="_blank"
-							>
-								Free NFT
-							</a>
-						</NavItem>
-						<NavItem>
-							<a
-								href="https://cucumberx.com"
-								className={
-									"btn btn-primary mb-2 mb-" +
-									navbarExpand +
-									"-0 mr-0 mr-" +
-									navbarExpand +
-									"-2"
-								}
-								target="_blank"
-							>
-								Home
-							</a>
-						</NavItem>
-						{isLoggedIn && (
-							<>
-								{adminAddresses.includes(address) && (
+					<BsNavbar.Collapse id="responsive-navbar-nav">
+						<Nav className="ml-auto">
+							<NavItem>
+								<a
+									href="https://xoxno.com/buy/VegetablArt/cucumberx"
+									className={
+										"btn btn-primary mb-2 mb-" +
+										navbarExpand +
+										"-0 mr-0 mr-" +
+										navbarExpand +
+										"-2"
+									}
+									target="_blank"
+								>
+									Buy Cucumber
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://docs.cucumberx.com"
+									className={
+										"btn btn-primary mb-2 mb-" +
+										navbarExpand +
+										"-0 mr-0 mr-" +
+										navbarExpand +
+										"-2"
+									}
+									target="_blank"
+								>
+									Whitepaper
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com/free-cucumberx-really/"
+									className={
+										"btn btn-primary mb-2 mb-" +
+										navbarExpand +
+										"-0 mr-0 mr-" +
+										navbarExpand +
+										"-2"
+									}
+									target="_blank"
+								>
+									Free NFT
+								</a>
+							</NavItem>
+							<NavItem>
+								<a
+									href="https://cucumberx.com"
+									className={
+										"btn btn-primary mb-2 mb-" +
+										navbarExpand +
+										"-0 mr-0 mr-" +
+										navbarExpand +
+										"-2"
+									}
+									target="_blank"
+								>
+									Home
+								</a>
+							</NavItem>
+							{isLoggedIn && (
+								<>
+									{adminAddresses.includes(address) && (
+										<NavItem>
+											<Link
+												to={routeNames.adminSettings}
+												className={
+													"btn btn-primary mb-2 mb-" +
+													navbarExpand +
+													"-0 mr-0 mr-" +
+													navbarExpand +
+													"-2"
+												}
+											>
+												Admin Settings
+											</Link>
+										</NavItem>
+									)}
 									<NavItem>
-										<Link
-											to={routeNames.adminSettings}
-											className={
-												"btn btn-primary mb-2 mb-" +
-												navbarExpand +
-												"-0 mr-0 mr-" +
-												navbarExpand +
-												"-2"
+										<button
+											className="btn btn-primary"
+											onClick={() =>
+												setShowModalAccount(true)
 											}
 										>
-											Admin Settings
-										</Link>
+											<FontAwesomeIcon
+												icon={faUser}
+												className="mr-2"
+											/>
+
+											{username
+												? username.replace(
+														".elrond",
+														""
+												  )
+												: shortenAddress(address)}
+										</button>
 									</NavItem>
-								)}
-								<NavItem>
-									<button
-										className="btn btn-primary"
-										onClick={handleLogout}
-									>
-										Logout
-									</button>
-								</NavItem>
-							</>
-						)}
-					</Nav>
-				</BsNavbar.Collapse>
-			</div>
-		</BsNavbar>
+								</>
+							)}
+						</Nav>
+					</BsNavbar.Collapse>
+				</div>
+			</BsNavbar>
+			<ModalDashboard
+				show={showModalAccount}
+				setShow={setShowModalAccount}
+			/>
+		</>
 	);
 };

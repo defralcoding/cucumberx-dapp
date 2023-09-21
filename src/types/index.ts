@@ -112,6 +112,8 @@ export class gqlLottery {
 	ticketToken?: string;
 	ticketPrice?: BigNumber;
 	prizeAmount?: BigNumber;
+	prizeNonce?: number;
+	prizeDescription?: string;
 	prizeToken?: string;
 	userTickets?: number[];
 	ticketUser?: AddressCustom;

@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { FormatAmount } from "@multiversx/sdk-dapp/UI";
 import { request } from "graphql-request";
 import { useGetAccount, useGetActiveTransactionsStatus } from "hooks";
+import {
+	TokenPayment,
+	TransferTransactionsFactory,
+	GasEstimator,
+	Address,
+} from "@multiversx/sdk-core";
 import { NftStake } from "components/NftStake";
 import { TokenStake } from "components/TokenStake";
 import { TokenLockedStake } from "components/TokenLockedStake";
 import { SectionSelector } from "components/SectionSelector";
-import { rewardToken, graphqlUrl } from "config";
+import { rewardToken as token, graphqlUrl } from "config";
 import { Query, gqlCucumberx, gqlLottery } from "types";
 import Decimal from "decimal.js";
 import { BigNumber } from "bignumber.js";
+import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
+import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
+import { string2hex } from "helpers";
 
 const timestampToDateTime = (timestamp: number | undefined) => {
 	if (timestamp === undefined || isNaN(timestamp)) {
@@ -25,6 +35,8 @@ export const Raffle = () => {
 	const [lotteryData, setLotteryData] = useState<gqlLottery | undefined>();
 	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
 	const currentTimestamp = Math.floor(Date.now() / 1000);
+
+	const [inputTickets, setInputTickets] = useState<string>("1");
 
 	const fetchData = async () => {
 		request<Query>(
@@ -49,7 +61,7 @@ export const Raffle = () => {
                     }
                 }
             }              
-            `, //TODO add winner
+            `,
 			{
 				user: address,
 			}
@@ -78,6 +90,45 @@ export const Raffle = () => {
 		}
 	}, [success, fail]);
 
+	const buyTickets = async () => {
+		const payload =
+			new TransferTransactionsFactory(new GasEstimator())
+				.createESDTTransfer({
+					tokenTransfer: TokenPayment.fungibleFromBigInteger(
+						token.identifier,
+						new BigNumber(inputTickets).multipliedBy(
+							lotteryData?.ticketPrice ?? 0
+						),
+						token.decimals
+					),
+					receiver: new Address(lotteryData?._address),
+					sender: new Address(address),
+					chainID: "D", //TODO Change
+				})
+				.getData()
+				.toString() +
+			"@" +
+			string2hex("buy_tickets") +
+			"@" +
+			new BigNumber(inputTickets).toString(16).padStart(2, "0");
+
+		await refreshAccount();
+
+		const { sessionId } = await sendTransactions({
+			transactions: {
+				value: 0,
+				data: payload,
+				receiver: lotteryData?._address,
+				gasLimit: 25_000_000,
+			},
+			transactionsDisplayInfo: {
+				processingMessage: "Buying tickets...",
+				errorMessage: "An error has occured during buy",
+				successMessage: "Tickets bought successfully",
+			},
+		});
+	};
+
 	if (!lotteryData) {
 		return <h1 className="text-center">Loading...</h1>;
 	}
@@ -90,16 +141,32 @@ export const Raffle = () => {
 
 			<h2 className="text-center">
 				<>
-					Ticket Price: {lotteryData.ticketPrice}&nbsp;
-					{rewardToken.symbol}
+					Ticket Price:&nbsp;
+					<FormatAmount
+						value={(
+							lotteryData.ticketPrice ?? new BigNumber(0)
+						).toString(10)}
+						token={token.symbol}
+						digits={token.decimalsToDisplay}
+						decimals={token.decimals}
+					/>
 				</>
 			</h2>
 
 			{new BigNumber(lotteryData.prizeAmount ?? 0).gt(0) && (
 				<h2 className="text-center">
 					<>
-						Prize: {lotteryData.prizeAmount}{" "}
-						{lotteryData?.prizeToken}
+						Prize:&nbsp;
+						<FormatAmount
+							value={(
+								lotteryData.prizeAmount ?? new BigNumber(0)
+							).toString(10)}
+							token={lotteryData.prizeToken}
+							digits={4}
+							decimals={
+								18 /* TODO have real number of decimals */
+							}
+						/>
 					</>
 				</h2>
 			)}
@@ -119,7 +186,36 @@ export const Raffle = () => {
 			<hr />
 
 			{currentTimestamp < (lotteryData.deadline ?? 0) ? (
-				<h2>Number of tickets to buy:</h2>
+				<>
+					<h2>Number of tickets to buy:</h2>
+
+					<input
+						type="number"
+						className="form-control form-control-lg"
+						placeholder="Amount"
+						value={inputTickets}
+						min={1}
+						onChange={(e) => setInputTickets(e.target.value)}
+					/>
+
+					<button
+						type="button"
+						className="btn btn-primary btn-lg mt-3"
+						onClick={() => buyTickets()}
+					>
+						Buy {inputTickets} ticket
+						{parseInt(inputTickets) > 1 ? "s" : ""}
+						&nbsp;for&nbsp;
+						<FormatAmount
+							value={new BigNumber(lotteryData.ticketPrice ?? 0)
+								.multipliedBy(parseInt(inputTickets))
+								.toString(10)}
+							token={token.symbol}
+							digits={token.decimalsToDisplay}
+							decimals={token.decimals}
+						/>
+					</button>
+				</>
 			) : (
 				<>
 					<h2>The raffle is over.</h2>
@@ -147,6 +243,31 @@ export const Raffle = () => {
 					<h3 className="mt-4">Join us soon for the next raffle!</h3>
 				</>
 			)}
+
+			<hr />
+
+			<h2>Bought tickets:</h2>
+			{(lotteryData.userTickets ?? []).length > 0 ? (
+				<h3>
+					You bought <span>{lotteryData.userTickets!.length}</span>{" "}
+					tickets:&nbsp;
+					{lotteryData
+						.userTickets!.map((ticket) => "#" + ticket)
+						.join(", ")}
+				</h3>
+			) : (
+				<h3>You didn't buy any ticket yet.</h3>
+			)}
+
+			<h3>
+				Your chances of winning are&nbsp;
+				{(lotteryData.userTickets ?? []).length > 0
+					? (lotteryData.userTickets!.length /
+							(lotteryData.lastTicketId ?? 0)) *
+					  100
+					: 0}
+				&nbsp;%
+			</h3>
 		</div>
 	);
 };

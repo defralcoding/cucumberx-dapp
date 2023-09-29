@@ -13,7 +13,7 @@ export const graphqlUrl = "https://backend.defralcoding.it:2053/graphql";
 export const stakingToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "$CUMB",
-	identifier: "CUMB-8b7006",
+	identifier: "XCUMB-da0e35", //TODO change
 	decimals: 18,
 	decimalsToDisplay: 2,
 };
@@ -21,7 +21,7 @@ export const stakingToken: InternalToken = {
 export const rewardToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "$CUMB",
-	identifier: "CUMB-8b7006",
+	identifier: "XCUMB-da0e35", //TODO change
 	decimals: 18,
 	decimalsToDisplay: 4,
 };

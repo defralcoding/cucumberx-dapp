@@ -17,9 +17,9 @@ import { NftVisualizer } from "components/NftVisualizer";
 import { SectionSelector } from "components/SectionSelector";
 import { string2hex } from "helpers";
 import BigNumber from "bignumber.js";
-
 import { rewardToken } from "config";
 import { DepositRewards } from "components/Admin/DepositRewards";
+import { Raffle } from "components/Admin/Raffle";
 
 export const AdminSettings = () => {
 	const createLockedToken = async () => {
@@ -106,6 +106,7 @@ export const AdminSettings = () => {
 						token={rewardToken}
 					/>
 
+					{/*
 					<button
 						className="btn btn-primary mt-2"
 						onClick={createLockedToken}
@@ -118,6 +119,12 @@ export const AdminSettings = () => {
 					>
 						2. Blocca token
 					</button>
+                    */}
+
+					<hr />
+
+					<h1>Raffle Management</h1>
+					<Raffle />
 				</div>
 			</div>
 		</div>

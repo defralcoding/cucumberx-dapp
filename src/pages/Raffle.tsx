@@ -54,7 +54,7 @@ export const Raffle = () => {
                         prizeNonce
                         prizeDescription
                         userTickets(user: $user)
-                        winner                        
+                        winner
                         winnerTicket
                         lastTicketId
                         deadline

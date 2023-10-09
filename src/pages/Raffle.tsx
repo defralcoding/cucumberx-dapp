@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FormatAmount } from "@multiversx/sdk-dapp/UI";
 import { request } from "graphql-request";
-import { useGetAccount, useGetActiveTransactionsStatus } from "hooks";
+import {
+	useGetAccount,
+	useGetActiveTransactionsStatus,
+	useGetNetworkConfig,
+} from "hooks";
 import {
 	TokenPayment,
 	TransferTransactionsFactory,
@@ -19,6 +23,7 @@ import { BigNumber } from "bignumber.js";
 import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sendTransactions";
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { string2hex } from "helpers";
+import { MyApiNetworkProvider } from "helpers/MyApiNetworkProvider";
 
 const timestampToDateTime = (timestamp: number | undefined) => {
 	if (timestamp === undefined || isNaN(timestamp)) {
@@ -32,8 +37,14 @@ export const Raffle = () => {
 	const { address } = useGetAccount();
 	const { success, fail } = useGetActiveTransactionsStatus();
 
+	const {
+		network: { apiAddress },
+	} = useGetNetworkConfig();
+	const apiNetworkProvider = new MyApiNetworkProvider(apiAddress);
+
 	const [lotteryData, setLotteryData] = useState<gqlLottery | undefined>();
 	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
+	const [prizeImage, setPrizeImage] = useState<string | undefined>();
 	const currentTimestamp = Math.floor(Date.now() / 1000);
 
 	const [inputTickets, setInputTickets] = useState<string>("1");
@@ -72,13 +83,33 @@ export const Raffle = () => {
 				setLotteryData(cucumberx.lottery);
 				if (cucumberx.tokenPrice)
 					setTokenPrice(new Decimal(cucumberx.tokenPrice));
+
+				if (
+					cucumberx?.lottery?.prizeToken &&
+					cucumberx?.lottery?.prizeNonce &&
+					cucumberx?.lottery?.prizeNonce != 0
+				) {
+					console.log(cucumberx.lottery.prizeToken, [
+						cucumberx.lottery.prizeNonce.toString(),
+					]);
+					apiNetworkProvider
+						.getNftsFromCollection(cucumberx.lottery.prizeToken, [
+							cucumberx.lottery.prizeNonce
+								.toString(16)
+								.padStart(2, "0"),
+						])
+						.then((res) => {
+							console.log(res);
+							setPrizeImage(res[0].media[0].url);
+						});
+				}
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
 
-	console.log(lotteryData);
+	console.log(prizeImage);
 
 	useEffect(() => {
 		fetchData();
@@ -128,7 +159,6 @@ export const Raffle = () => {
 			},
 		});
 	};
-
 	if (!lotteryData) {
 		return <h1 className="text-center">Loading...</h1>;
 	}
@@ -162,9 +192,11 @@ export const Raffle = () => {
 								lotteryData.prizeAmount ?? new BigNumber(0)
 							).toString(10)}
 							token={lotteryData.prizeToken}
-							digits={4}
+							digits={lotteryData.prizeNonce === 0 ? 4 : 0}
 							decimals={
-								18 /* TODO have real number of decimals */
+								lotteryData.prizeNonce === 0
+									? 18
+									: 0 /* TODO have real number of decimals */
 							}
 						/>
 					</>
@@ -173,6 +205,19 @@ export const Raffle = () => {
 			{lotteryData.prizeDescription && (
 				<h2 className="text-center">
 					<>Prize Description: {lotteryData.prizeDescription}</>
+				</h2>
+			)}
+			{prizeImage && prizeImage.indexOf(".mp4") && (
+				<h2 className="text-center">
+					<video
+						src={prizeImage}
+						className="img-fluid rounded "
+						autoPlay
+						loop
+						muted
+						playsInline
+						style={{ maxWidth: "250px" }}
+					/>
 				</h2>
 			)}
 

@@ -3,7 +3,7 @@ import { sendTransactions } from "@multiversx/sdk-dapp/services/transactions/sen
 import { refreshAccount } from "@multiversx/sdk-dapp/utils/account/refreshAccount";
 import { string2hex } from "helpers";
 import { InternalToken, Query, gqlCucumberx, gqlLottery } from "types";
-import { useGetActiveTransactionsStatus } from "hooks";
+import { useGetAccount, useGetActiveTransactionsStatus } from "hooks";
 import {
 	TokenPayment,
 	TransferTransactionsFactory,
@@ -11,19 +11,26 @@ import {
 	Address,
 	TransactionPayload,
 	ContractFunction,
+	SmartContract,
+	Interaction,
+	TokenTransfer,
+	BigUIntValue,
 } from "@multiversx/sdk-core";
 import { request } from "graphql-request";
 import Decimal from "decimal.js";
 import { rewardToken as token, graphqlUrl } from "config";
+import BigNumber from "bignumber.js";
 
 export const Raffle = () => {
 	const { success, fail } = useGetActiveTransactionsStatus();
+	const account = useGetAccount();
 
 	const [lotteryData, setLotteryData] = useState<gqlLottery | undefined>();
 	const [tokenPrice, setTokenPrice] = useState<Decimal | undefined>();
 	const currentTimestamp = Math.floor(Date.now() / 1000);
 
 	const [inputTickets, setInputTickets] = useState<string>("1");
+	const [inputEnd, setInputEnd] = useState<string>("");
 
 	const fetchData = async () => {
 		request<Query>(
@@ -115,6 +122,38 @@ export const Raffle = () => {
 		return <h1>Loading...</h1>;
 	}
 
+	const sendCreateLottery = async () => {
+		await refreshAccount();
+
+		let contract = new SmartContract({
+			address: new Address(lotteryData._address),
+		});
+		let f = new ContractFunction("start_lottery");
+		let interaction = new Interaction(contract, f, [
+			new BigUIntValue(
+				new BigNumber(Math.floor(new Date(inputEnd).getTime() / 1000))
+			),
+		]);
+
+		let transaction = interaction
+			.withValue(TokenTransfer.egldFromAmount(1))
+			.withGasLimit(20000000)
+			.withNonce(account.nonce)
+			.withSender(new Address(account.address))
+			.withChainID("1")
+			.buildTransaction();
+
+		console.log(transaction);
+		const { sessionId } = await sendTransactions({
+			transactions: transaction,
+			transactionsDisplayInfo: {
+				processingMessage: "Determining winner...",
+				errorMessage: "An error has occured during determine",
+				successMessage: "Winner determined successfully",
+			},
+		});
+	};
+
 	const sendDetermineWinner = async () => {
 		await refreshAccount();
 		const { sessionId } = await sendTransactions({
@@ -141,6 +180,23 @@ export const Raffle = () => {
 						{lotteryData.winnerTicket}
 						<br />
 						You can now create a new raffle.
+						<hr />
+						<div>
+							<label>End date/time</label>
+							<input
+								type="datetime-local"
+								className="form-control my-2"
+								placeholder="End date"
+								value={inputEnd}
+								onChange={(e) => setInputEnd(e.target.value)}
+							/>
+						</div>
+						<button
+							className="btn btn-primary my-1"
+							onClick={sendCreateLottery}
+						>
+							Create lottery
+						</button>
 					</h3>
 				)}
 
@@ -165,15 +221,9 @@ export const Raffle = () => {
 				<h3>The raffle is live!</h3>
 			)}
 
-			<h3>Number of tickets bought: {lotteryData.lastTicketId}</h3>
+			<hr />
 
-			<h2>Deposit rewards</h2>
-			<input
-				type="number"
-				className="form-control"
-				placeholder="Amount"
-			/>
-			<button className="btn btn-primary mt-2">Deposit rewards</button>
+			<h3>Number of tickets bought: {lotteryData.lastTicketId}</h3>
 		</div>
 	);
 };

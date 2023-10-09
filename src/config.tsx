@@ -8,12 +8,12 @@ export const apiTimeout = 6000;
 export const transactionSize = 15;
 export const TOOLS_API_URL = "https://tools.multiversx.com";
 
-export const graphqlUrl = "https://backend.defralcoding.it:2053/graphql";
+export const graphqlUrl = "https://backend.defralcoding.it/graphql";
 
 export const stakingToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "$CUMB",
-	identifier: "XCUMB-da0e35", //TODO change
+	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 2,
 };
@@ -21,7 +21,7 @@ export const stakingToken: InternalToken = {
 export const rewardToken: InternalToken = {
 	name: "CucumberX",
 	symbol: "$CUMB",
-	identifier: "XCUMB-da0e35", //TODO change
+	identifier: "CUMB-8b7006",
 	decimals: 18,
 	decimalsToDisplay: 4,
 };

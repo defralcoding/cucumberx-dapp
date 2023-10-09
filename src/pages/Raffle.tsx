@@ -103,7 +103,7 @@ export const Raffle = () => {
 					),
 					receiver: new Address(lotteryData?._address),
 					sender: new Address(address),
-					chainID: "D", //TODO Change
+					chainID: "1",
 				})
 				.getData()
 				.toString() +

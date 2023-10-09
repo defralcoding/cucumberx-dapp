@@ -137,23 +137,25 @@ export const Navbar = () => {
 						</Nav>
 					</BsNavbar.Collapse>
 
-					<div className="flex-grow-1-md">
-						<NavItem>
-							<button
-								className="btn btn-primary d-block w-100"
-								onClick={() => setShowModalAccount(true)}
-							>
-								<FontAwesomeIcon
-									icon={faUser}
-									className={"mr-2"}
-								/>
+					{isLoggedIn && (
+						<div className="flex-grow-1-md">
+							<NavItem>
+								<button
+									className="btn btn-primary d-block w-100"
+									onClick={() => setShowModalAccount(true)}
+								>
+									<FontAwesomeIcon
+										icon={faUser}
+										className={"mr-2"}
+									/>
 
-								{username
-									? username.replace(".elrond", "")
-									: shortenAddress(address)}
-							</button>
-						</NavItem>
-					</div>
+									{username
+										? username.replace(".elrond", "")
+										: shortenAddress(address)}
+								</button>
+							</NavItem>
+						</div>
+					)}
 				</div>
 			</BsNavbar>
 			<ModalDashboard

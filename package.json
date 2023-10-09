@@ -1,66 +1,66 @@
 {
-  "name": "@defralcoding/nft-staking-dapp-template",
-  "description": "DefralCoding NFT Staking dApp Template",
-  "version": "1.0.0",
-  "author": "DefralCoding",
-  "license": "GPL-3.0-or-later",
-  "repository": "@defralcoding/nft-staking-dapp-template",
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "6.1.0",
-    "@fortawesome/free-solid-svg-icons": "6.1.0",
-    "@fortawesome/react-fontawesome": "0.1.18",
-    "@multiversx/sdk-core": "^12.4.3",
-    "@multiversx/sdk-dapp": "^2.18.3",
-    "@multiversx/sdk-network-providers": "^1.5.0",
-    "axios": "0.24.0",
-    "bootstrap": "4.6.2",
-    "decimal.js": "^10.4.3",
-    "graphql": "^16.8.0",
-    "graphql-request": "^6.1.0",
-    "moment": "2.29.4",
-    "react": "18.2.0",
-    "react-bootstrap": "1.6.1",
-    "react-countup": "^6.4.2",
-    "react-dom": "18.2.0",
-    "react-router-dom": "6.4.2",
-    "web-vitals": "1.0.1"
-  },
-  "scripts": {
-    "start": "HTTPS=true PORT=3000 react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
-    "lint": "eslint --ext js,ts,tsx src"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
-  "jest": {
-    "moduleNameMapper": {
-      "@multiversx/sdk-dapp/(.*)": "<rootDir>/node_modules/@multiversx/sdk-dapp/__commonjs/$1.js"
+    "name": "@defralcoding/nft-staking-dapp-template",
+    "description": "DefralCoding NFT Staking dApp Template",
+    "version": "1.0.0",
+    "author": "DefralCoding",
+    "license": "GPL-3.0-or-later",
+    "repository": "@defralcoding/nft-staking-dapp-template",
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "6.1.0",
+        "@fortawesome/free-solid-svg-icons": "6.1.0",
+        "@fortawesome/react-fontawesome": "0.1.18",
+        "@multiversx/sdk-core": "^12.4.3",
+        "@multiversx/sdk-dapp": "^2.18.3",
+        "@multiversx/sdk-network-providers": "^1.5.0",
+        "axios": "0.24.0",
+        "bootstrap": "4.6.2",
+        "decimal.js": "^10.4.3",
+        "graphql": "^16.8.0",
+        "graphql-request": "^6.1.0",
+        "moment": "2.29.4",
+        "react": "18.2.0",
+        "react-bootstrap": "1.6.1",
+        "react-countup": "^6.4.2",
+        "react-dom": "18.2.0",
+        "react-router-dom": "6.4.2",
+        "web-vitals": "1.0.1"
+    },
+    "scripts": {
+        "start": "HTTPS=true react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-scripts eject",
+        "lint": "eslint --ext js,ts,tsx src"
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+    ],
+    "jest": {
+        "moduleNameMapper": {
+            "@multiversx/sdk-dapp/(.*)": "<rootDir>/node_modules/@multiversx/sdk-dapp/__commonjs/$1.js"
+        }
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "5.16.5",
+        "@testing-library/react": "14.0.0",
+        "@testing-library/user-event": "14.4.3",
+        "@types/jest": "26.0.15",
+        "@types/node": "12.0.0",
+        "@types/react": "18.0.24",
+        "@types/react-dom": "18.0.8",
+        "@types/react-router-dom": "5.1.7",
+        "crypto-browserify": "3.12.0",
+        "path-browserify": "1.0.1",
+        "prettier": "^3.0.2",
+        "react-app-rewired": "2.2.1",
+        "react-scripts": "5.0.1",
+        "sass": "1.55.0",
+        "stream-browserify": "3.0.0",
+        "typescript": "4.1.2"
+    },
+    "resolutions": {
+        "**/*/nth-check": "2.0.1"
     }
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "14.0.0",
-    "@testing-library/user-event": "14.4.3",
-    "@types/jest": "26.0.15",
-    "@types/node": "12.0.0",
-    "@types/react": "18.0.24",
-    "@types/react-dom": "18.0.8",
-    "@types/react-router-dom": "5.1.7",
-    "crypto-browserify": "3.12.0",
-    "path-browserify": "1.0.1",
-    "prettier": "^3.0.2",
-    "react-app-rewired": "2.2.1",
-    "react-scripts": "5.0.1",
-    "sass": "1.55.0",
-    "stream-browserify": "3.0.0",
-    "typescript": "4.1.2"
-  },
-  "resolutions": {
-    "**/*/nth-check": "2.0.1"
-  }
 }

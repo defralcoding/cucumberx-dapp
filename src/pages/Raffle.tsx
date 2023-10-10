@@ -150,7 +150,7 @@ export const Raffle = () => {
 				value: 0,
 				data: payload,
 				receiver: lotteryData?._address,
-				gasLimit: 25_000_000,
+				gasLimit: 50_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Buying tickets...",

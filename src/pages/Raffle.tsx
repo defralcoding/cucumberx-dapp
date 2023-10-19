@@ -96,10 +96,10 @@ export const Raffle = () => {
 						.getNftsFromCollection(cucumberx.lottery.prizeToken, [
 							cucumberx.lottery.prizeNonce
 								.toString(16)
-								.padStart(2, "0"),
+								.padStart(4, "0"),
 						])
 						.then((res) => {
-							console.log(res);
+							console.log("res", res);
 							setPrizeImage(res[0].media[0].url);
 						});
 				}
@@ -202,12 +202,12 @@ export const Raffle = () => {
 					</>
 				</h2>
 			)}
-			{lotteryData.prizeDescription && (
+			{lotteryData.prizeDescription != "" && (
 				<h2 className="text-center">
 					<>Prize Description: {lotteryData.prizeDescription}</>
 				</h2>
 			)}
-			{prizeImage && prizeImage.indexOf(".mp4") && (
+			{/*TODO prizeImage && prizeImage.indexOf(".mp4") && (
 				<h2 className="text-center">
 					<video
 						src={prizeImage}
@@ -219,7 +219,19 @@ export const Raffle = () => {
 						style={{ maxWidth: "250px" }}
 					/>
 				</h2>
-			)}
+            )*/}
+			{prizeImage &&
+				(prizeImage.indexOf(".jpg") ||
+					prizeImage.indexOf(".jpeg") ||
+					prizeImage.indexOf(".png")) && (
+					<h2 className="text-center">
+						<img
+							src={prizeImage}
+							className=" rounded"
+							style={{ maxWidth: "250px" }}
+						/>
+					</h2>
+				)}
 
 			<h2 className="text-center">
 				<>End of raffle: {timestampToDateTime(lotteryData.deadline)}</>

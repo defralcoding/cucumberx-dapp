@@ -64,9 +64,9 @@ export class MyApiNetworkProvider extends ApiNetworkProvider {
 		nonces: string[]
 	): Promise<[any]> {
 		const response = await this.doGetGeneric(
-			`collections/${collection}/nfts?size=10000&identifiers=${nonces.join(
-				","
-			)}`
+			`collections/${collection}/nfts?size=10000&identifiers=${nonces
+				.map((nonce) => collection + "-" + nonce)
+				.join(",")}`
 		);
 		return response;
 	}

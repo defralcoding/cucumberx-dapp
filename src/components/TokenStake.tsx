@@ -115,7 +115,7 @@ export const TokenStake = ({
 				value: 0,
 				data: "claim_rewards",
 				receiver: scAddress,
-				gasLimit: 20_000_000,
+				gasLimit: 30_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Claiming rewards...",

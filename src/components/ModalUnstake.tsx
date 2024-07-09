@@ -80,7 +80,7 @@ export function ModalUnstake({
 				value: 0,
 				data: "unstake@" + amountHex,
 				receiver: scAddress,
-				gasLimit: 15_000_000,
+				gasLimit: 25_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking...",

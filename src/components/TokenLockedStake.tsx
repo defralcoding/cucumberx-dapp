@@ -155,7 +155,7 @@ export const TokenLockedStake = ({
 				value: 0,
 				data: "unstake@" + hexId,
 				receiver: scAddress,
-				gasLimit: 12_000_000,
+				gasLimit: 35_000_000,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking...",

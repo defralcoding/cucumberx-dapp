@@ -206,7 +206,7 @@ export const NftStake = () => {
 				value: 0,
 				data: payload,
 				receiver: scAddress,
-				gasLimit: 10_000_000 + 10_000_000 * nftsToUnstake.length,
+				gasLimit: 10_000_000 + 15_000_000 * nftsToUnstake.length,
 			},
 			transactionsDisplayInfo: {
 				processingMessage: "Unstaking NFTs...",
